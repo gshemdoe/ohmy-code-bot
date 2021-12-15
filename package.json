@@ -4,6 +4,7 @@
   "description": "for ohmy channel downloading codes",
   "main": "bot.js",
   "scripts": {
+    "start": "node bot.js",
     "bot": "nodemon bot.js"
   },
   "repository": {
