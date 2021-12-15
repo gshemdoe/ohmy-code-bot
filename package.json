@@ -1,0 +1,27 @@
+{
+  "name": "code-ohmy-bot",
+  "version": "1.0.1",
+  "description": "for ohmy channel downloading codes",
+  "main": "bot.js",
+  "scripts": {
+    "bot": "nodemon bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gshemdoe/ohmy-code-bot.git"
+  },
+  "author": "shemdoe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gshemdoe/ohmy-code-bot/issues"
+  },
+  "homepage": "https://github.com/gshemdoe/ohmy-code-bot#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "mongoose": "^6.1.0",
+    "nanoid": "^3.1.30",
+    "nodemon": "^2.0.15",
+    "randomatic": "^3.1.1",
+    "telegraf": "^4.5.1"
+  }
+}

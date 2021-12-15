@@ -1,0 +1,24 @@
+users.updateMany({}, { $set: { 'unano': 'u' } }) // add new field
+
+ckheck if string has number
+
+let rawCode = ctx.message.text
+let hasNumber = /\d/
+let checker = hasNumber.test(rawCode)
+
+
+check if certain doc has no field
+
+bot.command('clean', ctx => {
+    ctx.reply('tunaanza kazi')
+    users.find({ points: { $exists: false } }).then((users) => {
+        users.forEach(user => {
+            user.updateOne({ $set: { unano: user.name + user.id, points: 10 } })
+                .then(() => {
+                    console.log(user.name + ' is updated')
+                })
+        })
+    }).catch((err) => {
+        console.log(err.message)
+    })
+})
