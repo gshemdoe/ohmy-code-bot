@@ -86,7 +86,7 @@ bot.start(ctx => {
                                                         inline_keyboard: [
                                                             [
                                                                 { text: '🎖 My points', callback_data: 'points' },
-                                                                { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
+                                                                { text: '➕ Add points 🚀', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
                                                             ],
                                                             [
                                                                 { text: '🔙 Return to 💋 OH MY', url: 'https://t.me/joinchat/V6CN2nFJKa1JezKS' }
@@ -138,9 +138,9 @@ bot.action('points', ctx => {
             let text = `
 ${ctx.chat.first_name}
 
-Your remaing points is: ${user.points} pts
+Your remaing points is: ${user.points} pts.
 
-Click  "➕ add points" button to increase your points
+Click  "➕ Add points 🚀" button to increase your points
 `
             ctx.answerCbQuery(text, {
                 show_alert: true
