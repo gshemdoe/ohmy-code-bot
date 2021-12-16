@@ -80,7 +80,7 @@ bot.start(ctx => {
                                     users.findOne({ chatid: ctx.chat.id })
                                         .then((user) => {
                                             setTimeout(() => {
-                                                ctx.reply(`You received the video and 2 points was deducted from your point's balance. \n\n<b>Your remaining points is ${user.points}</b>`, {
+                                                ctx.reply(`You received the video and <b>2 pts.</b> was deducted from your point's balance. \n\n<b>Your remaining points is ${user.points}</b>`, {
                                                     parse_mode: 'HTML',
                                                     reply_markup: {
                                                         inline_keyboard: [
