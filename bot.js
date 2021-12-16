@@ -89,12 +89,12 @@ bot.start(ctx => {
                                                                 { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
                                                             ],
                                                             [
-                                                                { text: 'More Videos (Open Oh-My)', url: 'https://t.me/joinchat/V6CN2nFJKa1JezKS' }
+                                                                { text: '🔙 Return to 💋 OH MY', url: 'https://t.me/joinchat/V6CN2nFJKa1JezKS' }
                                                             ]
                                                         ]
                                                     }
                                                 })
-                                            }, 1000)
+                                            }, 500)
 
                                         }).catch((err) => {
                                             console.log(err)
