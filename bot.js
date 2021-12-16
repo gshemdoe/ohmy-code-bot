@@ -75,29 +75,27 @@ bot.start(ctx => {
                         db.findOne({ nano })
                             .then((file) => {
                                 bot.telegram.copyMessage(ctx.chat.id, -1001586042518, file.msgId, {
-                                    reply_markup: {
-                                        inline_keyboard: [
-                                            [
-                                                { text: "Share", url: "https://t.me/share/url?url=https://t.me/joinchat/V6CN2nFJKa1JezKS&text=Download Brazzers videos Freely In Telegram" },
-                                                { text: "More Videos", url: "https://t.me/joinchat/V6CN2nFJKa1JezKS" }
-                                            ]
-                                        ]
-                                    }
                                 }).then(() => {
                                     console.log('msg id ' + file.msgId + ' is copied')
                                     users.findOne({ chatid: ctx.chat.id })
                                         .then((user) => {
-                                            ctx.reply(`You received the video and 2 pts was deducted from your point's balance. \n\n<b>Your remaining points is ${user.points}</b>`, {
-                                                parse_mode: 'HTML',
-                                                reply_markup: {
-                                                    inline_keyboard: [
-                                                        [
-                                                            { text: '🎖 My points', callback_data: 'points' },
-                                                            { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
+                                            setTimeout(() => {
+                                                ctx.reply(`You received the video and 2 pts was deducted from your point's balance. \n\n<b>Your remaining points is ${user.points}</b>`, {
+                                                    parse_mode: 'HTML',
+                                                    reply_markup: {
+                                                        inline_keyboard: [
+                                                            [
+                                                                { text: '🎖 My points', callback_data: 'points' },
+                                                                { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
+                                                            ],
+                                                            [
+                                                                { text: 'More Videos (Open Oh-My)', url: 'https://t.me/joinchat/V6CN2nFJKa1JezKS' }
+                                                            ]
                                                         ]
-                                                    ]
-                                                }
-                                            })
+                                                    }
+                                                })
+                                            }, 1000)
+
                                         }).catch((err) => {
                                             console.log(err)
                                             bot.telegram.sendMessage(741815228, err.message)
