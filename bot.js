@@ -98,15 +98,15 @@ bot.start(ctx => {
 
                                         }).catch((err) => {
                                             console.log(err)
-                                            bot.telegram.sendMessage(741815228, err.message)
+                                            bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                                         })
                                 }).catch((err) => {
                                     console.log(err)
-                                    bot.telegram.sendMessage(741815228, err.message)
+                                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                                 })
                             }).catch((err) => {
                                 console.log(err)
-                                bot.telegram.sendMessage(741815228, err.message)
+                                bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                             })
                     }
                     else if (user.points < 2) {
@@ -198,7 +198,7 @@ bot.launch()
     .then((console.log('Bot is running')))
     .catch((err) => {
         console.log('Bot is not running')
-        bot.telegram.sendMessage('@shemdoe', err.message)
+        bot.telegram.sendMessage('@shemdoe', err.message + ' bot failed to run')
     })
 
 
@@ -206,7 +206,7 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 process.on('unhandledRejection', (reason, promise) => {
-    bot.telegram.sendMessage(1473393723, reason)
+    bot.telegram.sendMessage(1473393723, reason + ' It is an unhandled rejection.')
     console.log(reason)
     process.exit(0)
     //on production here process will change from crash to start cools
@@ -215,5 +215,5 @@ process.on('unhandledRejection', (reason, promise) => {
 //caught any exception
 process.on('uncaughtException', (err) => {
     console.log(err.message)
-    bot.telegram.sendMessage(741815228, err.message)
+    bot.telegram.sendMessage(741815228, err.message + ' - It is ana uncaught exception.')
 })
