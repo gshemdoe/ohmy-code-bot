@@ -110,7 +110,7 @@ bot.start(ctx => {
                             })
                     }
                     else if (user.points < 2) {
-                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 http://www.ohmyw.xyz/boost/${ctx.chat.id}/add}</b>`, {
+                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 http://www.ohmyw.xyz/boost/${ctx.chat.id}/add</b>`, {
                             parse_mode: 'HTML',
                             reply_markup: {
                                 inline_keyboard: [
@@ -125,7 +125,7 @@ bot.start(ctx => {
                     }
                 }).catch((err) => {
                     console.log(err)
-                    bot.telegram.sendMessage(741815228, err.message)
+                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                 })
         }
     }
