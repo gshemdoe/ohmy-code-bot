@@ -93,6 +93,11 @@ bot.start(ctx => {
                                                             ]
                                                         ]
                                                     }
+                                                }).then(() => {
+                                                    console.log('Points status sent')
+                                                }).catch((err) => {
+                                                    console.log(err)
+                                                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                                                 })
                                             }, 500)
 
