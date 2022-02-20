@@ -87,9 +87,6 @@ bot.start(ctx => {
                                                             [
                                                                 { text: '🎖 My points', callback_data: 'points' },
                                                                 { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
-                                                            ],
-                                                            [
-                                                                { text: '🔙 Return to 💋 OH MY', url: 'https://t.me/joinchat/V6CN2nFJKa1JezKS' }
                                                             ]
                                                         ]
                                                     }
