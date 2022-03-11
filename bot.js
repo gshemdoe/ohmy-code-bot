@@ -123,6 +123,11 @@ bot.start(ctx => {
                                     [{ text: '🚀 Buy here 100 points for $10', callback_data: 'buy' }]
                                 ]
                             }
+                        }).then(()=> {
+                            console.log('Insufficient pts msg sent successfully')
+                        }).catch((err)=> {
+                            console.log(err)
+                            bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                         })
                     }
                 }).catch((err) => {
