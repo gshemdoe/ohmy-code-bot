@@ -86,7 +86,7 @@ bot.start(ctx => {
                                                         inline_keyboard: [
                                                             [
                                                                 { text: '🎖 My points', callback_data: 'points' },
-                                                                { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
+                                                                { text: '➕ Add points', url: `www.dramastore.net/ohmy-channel-subscribers/${ctx.chat.id}/boost` }
                                                             ]
                                                         ]
                                                     }
@@ -112,15 +112,15 @@ bot.start(ctx => {
                             })
                     }
                     else if (user.points < 2) {
-                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 http://www.ohmyw.xyz/boost/${ctx.chat.id}/add</b>`, {
+                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 http://www.dramastore.net/ohmy-channel-subscribers/${ctx.chat.id}/boost</b>`, {
                             parse_mode: 'HTML',
                             reply_markup: {
                                 inline_keyboard: [
                                     [
                                         { text: '🎖 My points', callback_data: 'points' },
-                                        { text: '➕ Add points', url: `www.ohmyw.xyz/boost/${ctx.chat.id}/add` }
+                                        { text: '➕ Add points', url: `www.dramastore.net/ohmy-channel-subscribers/${ctx.chat.id}/boost` }
                                     ],
-                                    [{ text: '🚀 Buy here 100 points for $10', callback_data: 'buy' }]
+                                    [{ text: '🚀 Buy here 100 points for $5', callback_data: 'buy' }]
                                 ]
                             }
                         }).then(()=> {
