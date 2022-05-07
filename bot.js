@@ -86,7 +86,7 @@ bot.start(ctx => {
                                                         inline_keyboard: [
                                                             [
                                                                 { text: '🎖 My points', callback_data: 'points' },
-                                                                { text: '➕ Add points', url: `http://ohmy-premium-shows.dramastore.net/boost/${ctx.chat.id}/add` }
+                                                                { text: '➕ Add points', url: `https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}` }
                                                             ]
                                                         ]
                                                     }
@@ -112,13 +112,13 @@ bot.start(ctx => {
                             })
                     }
                     else if (user.points < 2) {
-                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 http://ohmy-premium-shows.dramastore.net/boost/${ctx.chat.id}/add</b>`, {
+                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}</b>`, {
                             parse_mode: 'HTML',
                             reply_markup: {
                                 inline_keyboard: [
                                     [
                                         { text: '🎖 My points', callback_data: 'points' },
-                                        { text: '➕ Add points', url: `http://ohmy-premium-shows.dramastore.net/boost/${ctx.chat.id}/add` }
+                                        { text: '➕ Add points', url: `https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}` }
                                     ],
                                     [{ text: '🚀 Buy here 100 points for $5', callback_data: 'buy' }]
                                 ]
