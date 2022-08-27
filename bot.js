@@ -17,6 +17,14 @@ mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
+const important = {
+    replyDb: -1001608248942,
+    pzone: -1001352114412,
+    prem_channel: -1001470139866,
+    local_domain: 't.me/rss_shemdoe_bot?start=',
+    prod_domain: 't.me/ohmychannelV2bot?start='
+}
+
 function errMessage(err, id) {
     if (err.message && err.description) {
         console.log(err.message)
@@ -53,7 +61,7 @@ bot.start(async ctx => {
                 await user.updateOne({ $inc: { points: -2 } })
                 let vid = await db.findOne({ nano })
                 await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
-                await ctx.reply(`You got a premium porn video and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
+                await ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
                     parse_mode: 'HTMl',
                     reply_markup: {
                         inline_keyboard: [
@@ -111,6 +119,24 @@ bot.command('add', async ctx => {
     }
 })
 
+bot.on('channel_post', async ctx=> {
+    if(ctx.channelPost.chat.id == important.replyDb) {
+        if(ctx.channelPost.reply_to_message) {
+            let rpId = ctx.channelPost.reply_to_message.message_id
+            let cdata = ctx.channelPost.text
+
+            await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {text: '⬇ DOWNLOAD FULL VIDEO', callback_data: `getFull-${cdata}`}
+                        ]
+                    ]
+                }
+            })
+        }
+    }
+})
 
 bot.action('points', async ctx => {
     try {
@@ -144,6 +170,19 @@ bot.action('add_more', async ctx => {
 
 bot.action('inst', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609)
+})
+
+bot.on('callback_query', async ctx=> {
+    let cdata = ctx.callbackQuery.data
+    let callId = ctx.callbackQuery.id
+    if(cdata.includes('getFull-')) {
+        let nano = cdata.split('-')[1]
+
+        ctx.answerCbQuery('', {
+            url: important.domain + nano,
+            cache_time: 600
+        })
+    }
 })
 
 
