@@ -15,197 +15,142 @@ mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts
         bot.telegram.sendMessage(741815228, err.message)
     })
 
-bot.start(ctx => {
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+function errMessage(err, id) {
+    if (err.message && err.description) {
+        console.log(err.message)
+        bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
+    }
+    else if (err.message && !err.description) {
+        console.log(err.message)
+        bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
+    } else if (!err.message && err.description) {
+        console.log(err.description)
+        bot.telegram.sendMessage(741815228, err.description + ' from ' + id)
+    }
+}
+
+
+
+bot.start(async ctx => {
     let id = ctx.chat.id
     let name = ctx.chat.first_name
 
-    users.findOne({ chatid: id }).then((user) => {
-        if (user) {
-            console.log(`${id} is already there... not added`)
-            sendTheVideo() //send video
-        } else {
-            users.create({
-                chatid: id,
-                name,
-                unano: `user${id}`,
-                points: 10
-            }).then(() => {
-                sendTheVideo() //send video
-                console.log(`${id} added`)
-            }).catch((err) => {
-                console.log(err)
-                bot.telegram.sendMessage(741815228, err.message)
-            })
-        }
-    }).catch((err) => {
-        console.log(err)
-        bot.telegram.sendMessage(741815228, err.message)
-    })
-
-    // akibonyeza start bila payload
-    if (!ctx.startPayload) {
-        ctx.reply(`Hello, welcome ${ctx.chat.first_name}, to download Full Videos use the links provided on "OH MY" channel under the PREVIEW videos.`, {
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        { text: "Open OH MY 💋 Channel", url: "https://t.me/joinchat/V6CN2nFJKa1JezKS" }
-                    ]
-                ]
-            }
-        })
-            .then(() => { console.log('Bot started') }).catch((err) => {
-                bot.telegram.sendMessage(741815228, err.message)
-                console.log(err)
-            })
-    }
-
-
-    //function to send video and deduct points
-    // This is hoisting thats why this bottomed function can be called above but if we were to define it with variable we wouldnt be able to call it above
-    function sendTheVideo() {
+    try {
         if (ctx.startPayload) {
             let nano = ctx.startPayload
 
-            users.findOne({ chatid: ctx.chat.id })
-                .then((user) => {
-                    if (user.points >= 2) {
-                        user.updateOne({ points: (user.points - 2) })
-                            .then(() => console.log('-2 from ' + user.chatid))
-                            .catch((err) => console.log(err))
-                        db.findOne({ nano })
-                            .then((file) => {
-                                bot.telegram.copyMessage(ctx.chat.id, -1001586042518, file.msgId, {
-                                }).then(() => {
-                                    console.log('msg id ' + file.msgId + ' is copied')
-                                    users.findOne({ chatid: ctx.chat.id })
-                                        .then((user) => {
-                                            setTimeout(() => {
-                                                ctx.reply(`You received the video and <b>2 pts.</b> was deducted from your point's balance. \n\n<b>Your remaining points is ${user.points}</b>`, {
-                                                    parse_mode: 'HTML',
-                                                    reply_markup: {
-                                                        inline_keyboard: [
-                                                            [
-                                                                { text: '🎖 My points', callback_data: 'points' },
-                                                                { text: '➕ Add points', url: `https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}` }
-                                                            ]
-                                                        ]
-                                                    }
-                                                }).then(() => {
-                                                    console.log('Points status sent')
-                                                }).catch((err) => {
-                                                    console.log(err)
-                                                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
-                                                })
-                                            }, 500)
+            let thisUser = await users.findOne({ chatid: id })
+            if (!thisUser) {
+                await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
+                console.log('New user Added')
+                await ctx.reply(`Hello ${name}, welcome onboarding, this is OH! MY Booster Bot, You'll be using me for getting premium shows, every show I send you will cost you 2 points, as you're newbie I gave you 10 free points.`)
+            }
 
-                                        }).catch((err) => {
-                                            console.log(err)
-                                            bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
-                                        })
-                                }).catch((err) => {
-                                    console.log(err)
-                                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
-                                })
-                            }).catch((err) => {
-                                console.log(err)
-                                bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
-                            })
+            let user = await users.findOne({ chatid: id })
+            if (user.points >= 2) {
+                await user.updateOne({ $inc: { points: -2 } })
+                let vid = await db.findOne({ nano })
+                await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
+                await ctx.reply(`You got a premium porn video and 2 points deducted from your points balance. You remain with ${user.points - 2} points.`, {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                { text: '➕ Add more', callback_data: 'add_more' },
+                                { text: '💰 Balance', callback_data: 'points' }
+                            ]
+                        ]
                     }
-                    else if (user.points < 2) {
-                        ctx.reply(`You need atleast 2 points to download this video. Click the link below to <b>increase your points for free.</b> \n\n<b>Free boost 👉 https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}</b>`, {
-                            parse_mode: 'HTML',
-                            reply_markup: {
-                                inline_keyboard: [
-                                    [
-                                        { text: '🎖 My points', callback_data: 'points' },
-                                        { text: '➕ Add points', url: `https://font5.net/pages/usersohpoints?userid=OH${ctx.chat.id}` }
-                                    ],
-                                    [{ text: '🚀 Buy here 100 points for $5', callback_data: 'buy' }]
-                                ]
-                            }
-                        }).then(()=> {
-                            console.log('Insufficient pts msg sent successfully')
-                        }).catch((err)=> {
-                            console.log(err)
-                            bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
-                        })
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                    bot.telegram.sendMessage(741815228, err.message + ' from ' + ctx.chat.id)
                 })
+            } else if (user.points < 2) {
+                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Due to the insufficiency of operation costs of <b>OH! MY channel</b> you'll need to donate a small amount by buying downloading points. See the donation packages below.`, {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '💰 Get 100 points for $1.0', callback_data: 'inst' }],
+                            [{ text: '🥈 Get 200 points for $1.5', callback_data: 'inst' }],
+                            [{ text: '💎 Get 400 points for $2.5', callback_data: 'inst' }],
+                            [{ text: '🥇 Get 1000 points for $5.0', callback_data: 'inst' }]
+                        ]
+                    }
+                })
+            }
         }
+
+        if (!ctx.startPayload) {
+            await ctx.reply(`Hello, welcome ${ctx.chat.first_name}, to download Full Videos use the links provided on "OH MY" channel under the PREVIEW videos.`, {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "Open OH MY 💋 Channel", url: "https://t.me/joinchat/V6CN2nFJKa1JezKS" }
+                        ]
+                    ]
+                }
+            })
+        }
+    } catch (err) {
+        errMessage(err, id)
     }
 })
 
-bot.action('points', ctx => {
 
-    users.findOne({ chatid: ctx.chat.id })
-        .then((user) => {
-            let text = `
-${ctx.chat.first_name}
+bot.command('add', async ctx => {
+    let txt = ctx.message.text
 
-Your remaing points is: ${user.points} pts.
+    try {
+        let arr = txt.split('-')
+        let id = Number(arr[1])
+        let pts = Number(arr[2])
 
-Click  "➕ Add points" button to increase your points
+        let updt = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: pts } }, { new: true })
+        await bot.telegram.sendMessage(id, `Congratulations 🎉 \nYour payment is confirmed! You received ${pts} points. Your new payment balance is ${updt.points}`)
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
+    }
+})
+
+
+bot.action('points', async ctx => {
+    try {
+        let user = await users.findOne({ chatid: ctx.chat.id })
+        let text = `${ctx.chat.first_name} \n\nYour remaing points is: ${user.points} pts. \n\nClick  "➕ Add More" button to add your points.
 `
-            ctx.answerCbQuery(text, {
-                show_alert: true
-            })
-
+        ctx.answerCbQuery(text, {
+            show_alert: true
         })
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
+    }
 })
 
-bot.action('buy', ctx => {
-    let text = `
-You are about to buy 100 points for $10.... Payments are accepted in WebMoney and selected cryptocurrencies only (USDT, BUSD & LTC)
+bot.action('add_more', async ctx => {
+    let chatid = ctx.chat.id
+    let name = ctx.chat.first_name
 
-<b>Note:</b> <i>Before sending LTC check the conversion rate to make sure you're sending the right amount ($10) - <a href="https://usd.mconvert.net/ltc/10">Click here to check how much is $10 in Litecoin</a></i>
-
-Click the address to copy
-
-1. <b>Webmoney (WMZ) -</b> <code>Z681965649472</code>
-
-2. <b>Litecoin (LTC) -</b> <code>ltc1qjc7g59jqyd5aqm2gyfxp3el23l2j4g9un7vhj5</code>
-
-3. <b>USDT (TRC20) -</b> <code>TXJoNQ9E85XEPp8hhBiESUwhjht7Ucwov6</code>
-
-4. <b>BUSD (BEP20) -</b> <code>0x99E9fe6234D21B4Af506679AE460fe391aEb27b0</code>
-
-After the completion of transaction send the screenshot and your crypto address to @blackberrytz and your points will be increased by 100
-    `
-    ctx.reply(text, { parse_mode: 'HTML', disable_web_page_preview: true })
-})
-
-
-// admin boost 
-bot.command('boost666', ctx => {
-    users.findOne({ chatid: ctx.chat.id }).then((user) => {
-        user.updateOne({ points: 10 }).then(() => ctx.reply('You boosted'))
+    await ctx.reply(`Hello ${name}, due to the insufficiency of operation costs, our users now will need to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
+        parse_mode: 'HTML',
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: '💰 Get 100 points for $1.0', callback_data: 'inst' }],
+                [{ text: '🥈 Get 200 points for $1.5', callback_data: 'inst' }],
+                [{ text: '💎 Get 400 points for $2.5', callback_data: 'inst' }],
+                [{ text: '🥇 Get 1000 points for $5.0', callback_data: 'inst' }]
+            ]
+        }
     })
 })
 
-// boost customer with 100 points
-bot.on('text', ctx => {
-    let text = ctx.message.text
-
-    if (text.includes('add100-')) {
-        let chatid = text.split('-')[1]
-
-        users.findOne({ chatid }).then((user) => {
-            user.updateOne({ points: (user.points + 100) }).then(() => ctx.reply('You boosted ' + chatid + ' with 100 points')).catch((err) => {
-                console.log(err)
-                bot.telegram.sendMessage(741815228, err.message)
-            })
-        })
-    }
+bot.action('inst', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609)
 })
+
 
 bot.launch()
     .then((console.log('Bot is running')))
     .catch((err) => {
         console.log('Bot is not running')
-        bot.telegram.sendMessage('@shemdoe', err.message + ' bot failed to run')
+        bot.telegram.sendMessage('@shemdoe', err.message)
     })
 
 
