@@ -65,7 +65,7 @@ bot.start(async ctx => {
                     }
                 })
             } else if (user.points < 2) {
-                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Due to the insufficiency of operation costs of <b>OH! MY channel</b> you'll need to donate a small amount by buying downloading points. See the donation packages below.`, {
+                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Add your points by donating a small amount to cover operation costs. See donation packages below.`, {
                     parse_mode: 'HTML',
                     reply_markup: {
                         inline_keyboard: [
@@ -129,7 +129,7 @@ bot.action('add_more', async ctx => {
     let chatid = ctx.chat.id
     let name = ctx.chat.first_name
 
-    await ctx.reply(`Hello ${name}, due to the insufficiency of operation costs, our users now will need to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
+    await ctx.reply(`Hello ${name}, due to the rising in operation costs, our users now will have to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
         parse_mode: 'HTML',
         reply_markup: {
             inline_keyboard: [
