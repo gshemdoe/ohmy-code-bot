@@ -179,7 +179,7 @@ bot.on('callback_query', async ctx=> {
         let nano = cdata.split('-')[1]
 
         ctx.answerCbQuery('', {
-            url: important.domain + nano,
+            url: important.prod_domain + nano,
             cache_time: 600
         })
     }
