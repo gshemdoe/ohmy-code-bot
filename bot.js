@@ -53,7 +53,8 @@ bot.start(async ctx => {
                 await user.updateOne({ $inc: { points: -2 } })
                 let vid = await db.findOne({ nano })
                 await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
-                await ctx.reply(`You got a premium porn video and 2 points deducted from your points balance. You remain with ${user.points - 2} points.`, {
+                await ctx.reply(`You got a premium porn video and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
+                    parse_mode: 'HTMl',
                     reply_markup: {
                         inline_keyboard: [
                             [
