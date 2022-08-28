@@ -73,7 +73,7 @@ bot.start(async ctx => {
                     }
                 })
             } else if (user.points < 2) {
-                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Add your points by donating a small amount to cover operation costs. See donation packages below.`, {
+                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Add your points by donating a small amount to cover operating costs. See donation packages below.`, {
                     parse_mode: 'HTML',
                     reply_markup: {
                         inline_keyboard: [
@@ -113,15 +113,15 @@ bot.command('add', async ctx => {
         let pts = Number(arr[2])
 
         let updt = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: pts } }, { new: true })
-        await bot.telegram.sendMessage(id, `Congratulations 🎉 \nYour payment is confirmed! You received ${pts} points. Your new payment balance is ${updt.points}`)
+        await bot.telegram.sendMessage(id, `Congratulations 🎉 \nYour payment is confirmed! You received ${pts} points. Your new payment balance is ${updt.points} points`)
     } catch (err) {
         errMessage(err, ctx.chat.id)
     }
 })
 
-bot.on('channel_post', async ctx=> {
-    if(ctx.channelPost.chat.id == important.replyDb) {
-        if(ctx.channelPost.reply_to_message) {
+bot.on('channel_post', async ctx => {
+    if (ctx.channelPost.chat.id == important.replyDb) {
+        if (ctx.channelPost.reply_to_message) {
             let rpId = ctx.channelPost.reply_to_message.message_id
             let cdata = ctx.channelPost.text
 
@@ -129,11 +129,11 @@ bot.on('channel_post', async ctx=> {
                 reply_markup: {
                     inline_keyboard: [
                         [
-                            {text: '⬇ DOWNLOAD FULL VIDEO', callback_data: `getFull-${cdata}`}
+                            { text: '⬇ DOWNLOAD FULL VIDEO', callback_data: `getFull-${cdata}` }
                         ]
                     ]
                 }
-            })
+            }).catch(err=> errMessage(err, ctx.chat.id))
         }
     }
 })
@@ -155,7 +155,7 @@ bot.action('add_more', async ctx => {
     let chatid = ctx.chat.id
     let name = ctx.chat.first_name
 
-    await ctx.reply(`Hello ${name}, due to the rising in operation costs, our users now will have to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
+    await ctx.reply(`Hello ${name}, due to the rising in operating costs, our users now will have to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
         parse_mode: 'HTML',
         reply_markup: {
             inline_keyboard: [
@@ -165,23 +165,72 @@ bot.action('add_more', async ctx => {
                 [{ text: '🥇 Get 1000 points for $5.0', callback_data: 'inst' }]
             ]
         }
-    })
+    }).catch(err=> errMessage(err, ctx.chat.id))
+})
+
+bot.action('usdt', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2618)
+    .catch(err=> errMessage(err, ctx.chat.id))
+})
+
+bot.action('ltc', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2619)
+    .catch(err=> errMessage(err, ctx.chat.id))
+})
+
+bot.action('busd', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2620)
+    .catch(err=> errMessage(err, ctx.chat.id))
+})
+
+bot.action('doge', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2621)
+    .catch(err=> errMessage(err, ctx.chat.id))
+})
+
+bot.action('personal', async ctx => {
+    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2622)
+    .catch(err=> errMessage(err, ctx.chat.id))
 })
 
 bot.action('inst', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609)
+    try {
+        await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609, {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        { text: '› USDT', callback_data: 'usdt' },
+                        { text: '› BUSD', callback_data: 'busd' },
+                    ],
+                    [
+                        { text: '› LTC', callback_data: 'ltc' },
+                        { text: '› DOGE', callback_data: 'doge' },
+                    ],
+                    [
+                        { text: `I need a personal help 😢`, callback_data: 'personal' }
+                    ]
+                ]
+            }
+        })
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
+    }
 })
 
-bot.on('callback_query', async ctx=> {
-    let cdata = ctx.callbackQuery.data
-    let callId = ctx.callbackQuery.id
-    if(cdata.includes('getFull-')) {
-        let nano = cdata.split('-')[1]
+bot.on('callback_query', async ctx => {
+    try {
+        let cdata = ctx.callbackQuery.data
+        let callId = ctx.callbackQuery.id
+        if (cdata.includes('getFull-')) {
+            let nano = cdata.split('-')[1]
 
-        ctx.answerCbQuery('', {
-            url: important.prod_domain + nano,
-            cache_time: 600
-        })
+            ctx.answerCbQuery('', {
+                url: important.prod_domain + nano,
+                cache_time: 600
+            })
+        }
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
     }
 })
 
@@ -200,7 +249,6 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 process.on('unhandledRejection', (reason, promise) => {
     bot.telegram.sendMessage(1473393723, reason + ' It is an unhandled rejection.')
     console.log(reason)
-    process.exit(0)
     //on production here process will change from crash to start cools
 })
 
