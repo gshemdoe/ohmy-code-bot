@@ -22,7 +22,8 @@ const important = {
     pzone: -1001352114412,
     prem_channel: -1001470139866,
     local_domain: 't.me/rss_shemdoe_bot?start=',
-    prod_domain: 't.me/ohmychannelV2bot?start='
+    prod_domain: 't.me/ohmychannelV2bot?start=',
+    shemdoe: 741815228
 }
 
 function errMessage(err, id) {
@@ -222,7 +223,7 @@ bot.on('callback_query', async ctx => {
         let cdata = ctx.callbackQuery.data
         let callId = ctx.callbackQuery.id
         if (cdata.includes('getFull-')) {
-            let nano = cdata.split('-')[1]
+            let nano = cdata.split('getFull-')[1]
 
             ctx.answerCbQuery('', {
                 url: important.prod_domain + nano,
@@ -239,7 +240,7 @@ bot.launch()
     .then((console.log('Bot is running')))
     .catch((err) => {
         console.log('Bot is not running')
-        bot.telegram.sendMessage('@shemdoe', err.message)
+        bot.telegram.sendMessage(important.shemdoe, err.message)
     })
 
 
@@ -247,7 +248,7 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 process.on('unhandledRejection', (reason, promise) => {
-    bot.telegram.sendMessage(1473393723, reason + ' It is an unhandled rejection.')
+    bot.telegram.sendMessage(important.shemdoe, reason + ' It is an unhandled rejection.')
     console.log(reason)
     //on production here process will change from crash to start cools
 })
