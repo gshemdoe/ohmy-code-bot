@@ -28,14 +28,14 @@ const important = {
 
 function errMessage(err, id) {
     if (err.message && err.description) {
-        console.log(err.message)
+        console.log(err)
         bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
     }
     else if (err.message && !err.description) {
-        console.log(err.message)
+        console.log(err)
         bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
     } else if (!err.message && err.description) {
-        console.log(err.description)
+        console.log(err)
         bot.telegram.sendMessage(741815228, err.description + ' from ' + id)
     }
 }
@@ -255,6 +255,6 @@ process.on('unhandledRejection', (reason, promise) => {
 
 //caught any exception
 process.on('uncaughtException', (err) => {
-    console.log(err.message)
+    console.log(err)
     bot.telegram.sendMessage(741815228, err.message + ' - It is ana uncaught exception.')
 })
