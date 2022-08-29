@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const db = require('./database/db')
 const users = require('./database/users')
 const { nanoid } = require('nanoid')
+const offer = require('./database/offers')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -50,42 +51,16 @@ bot.start(async ctx => {
         if (ctx.startPayload) {
             let nano = ctx.startPayload
 
-            let thisUser = await users.findOne({ chatid: id })
-            if (!thisUser) {
-                await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
-                console.log('New user Added')
-                await ctx.reply(`Hello ${name}, welcome onboarding, this is OH! MY Booster Bot, You'll be using me for getting premium shows, every show I send you will cost you 2 points, as you're newbie I gave you 10 free points.`)
-            }
-
-            let user = await users.findOne({ chatid: id })
-            if (user.points >= 2) {
-                await user.updateOne({ $inc: { points: -2 } })
-                let vid = await db.findOne({ nano })
-                await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
-                await ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
-                    parse_mode: 'HTMl',
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                { text: '➕ Add more', callback_data: 'add_more' },
-                                { text: '💰 Balance', callback_data: 'points' }
-                            ]
-                        ]
-                    }
-                })
-            } else if (user.points < 2) {
-                await ctx.reply(`Hello <b>${ctx.chat.first_name}</b>, You don't have enough points to access the premium content. Add your points by donating a small amount to cover operating costs. See donation packages below.`, {
-                    parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: '💰 Get 100 points for $1.0', callback_data: 'inst' }],
-                            [{ text: '🥈 Get 200 points for $1.5', callback_data: 'inst' }],
-                            [{ text: '💎 Get 400 points for $2.5', callback_data: 'inst' }],
-                            [{ text: '🥇 Get 1000 points for $5.0', callback_data: 'inst' }]
-                        ]
-                    }
-                })
-            }
+            let title = await db.findOne({ nano })
+            ctx.reply(`<b>${title.caption}</b> \n\nHow would you like to download this video?`, {
+                parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '⬇ WITH POINTS (no link)', callback_data: `paid-${nano}` }],
+                        [{ text: '🆓 WITH NO POINTS (link)', callback_data: `free-${nano}` }]
+                    ]
+                }
+            })
         }
 
         if (!ctx.startPayload) {
@@ -101,6 +76,19 @@ bot.start(async ctx => {
         }
     } catch (err) {
         errMessage(err, id)
+    }
+})
+
+
+bot.command('offer', async ctx => {
+    try {
+        let txt = ctx.message.text
+        let durl = txt.split('/offer-')[1]
+
+        await offer.updateOne({}, { url: durl, stats: 0 }, { upsert: true })
+        ctx.reply('Offer posted successfully')
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
     }
 })
 
@@ -134,7 +122,7 @@ bot.on('channel_post', async ctx => {
                         ]
                     ]
                 }
-            }).catch(err=> errMessage(err, ctx.chat.id))
+            }).catch(err => errMessage(err, ctx.chat.id))
         }
     }
 })
@@ -153,48 +141,57 @@ bot.action('points', async ctx => {
 })
 
 bot.action('add_more', async ctx => {
-    let chatid = ctx.chat.id
-    let name = ctx.chat.first_name
+    try {
+        let chatid = ctx.chat.id
+        let name = ctx.chat.first_name
+        let id_to_delete = ctx.callbackQuery.message.message_id
 
-    await ctx.reply(`Hello ${name}, due to the rising in operating costs, our users now will have to donate a small amount by buying downloading points. With points you'll be able to download all premium shows from #Brazzers, #Realitykings, #MomSwaps, #FamilySwaps, #Familystrokes and more... See the packages below.`, {
-        parse_mode: 'HTML',
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: '💰 Get 100 points for $1.0', callback_data: 'inst' }],
-                [{ text: '🥈 Get 200 points for $1.5', callback_data: 'inst' }],
-                [{ text: '💎 Get 400 points for $2.5', callback_data: 'inst' }],
-                [{ text: '🥇 Get 1000 points for $5.0', callback_data: 'inst' }]
-            ]
-        }
-    }).catch(err=> errMessage(err, ctx.chat.id))
+        await ctx.reply(`Hello ${name}, buy more points from below packages.`, {
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: '» Get 100 points for $1.0', callback_data: 'inst' }],
+                    [{ text: '» Get 200 points for $1.5', callback_data: 'inst' }],
+                    [{ text: '» Get 400 points for $2.5', callback_data: 'inst' }],
+                    [{ text: '» Get 1000 points for $5.0', callback_data: 'inst' }]
+                ]
+            }
+        })
+        await bot.telegram.deleteMessage(chatid, id_to_delete)
+    } catch (err) {
+        errMessage(err, ctx.chat.id)
+    }
+
 })
 
 bot.action('usdt', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2618)
-    .catch(err=> errMessage(err, ctx.chat.id))
+        .catch(err => errMessage(err, ctx.chat.id))
 })
 
 bot.action('ltc', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2619)
-    .catch(err=> errMessage(err, ctx.chat.id))
+        .catch(err => errMessage(err, ctx.chat.id))
 })
 
 bot.action('busd', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2620)
-    .catch(err=> errMessage(err, ctx.chat.id))
+        .catch(err => errMessage(err, ctx.chat.id))
 })
 
 bot.action('doge', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2621)
-    .catch(err=> errMessage(err, ctx.chat.id))
+        .catch(err => errMessage(err, ctx.chat.id))
 })
 
 bot.action('personal', async ctx => {
     await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2622)
-    .catch(err=> errMessage(err, ctx.chat.id))
+        .catch(err => errMessage(err, ctx.chat.id))
 })
 
 bot.action('inst', async ctx => {
+    let chatid = ctx.chat.id
+    let msg_to_delete = ctx.callbackQuery.message.message_id
     try {
         await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609, {
             reply_markup: {
@@ -213,6 +210,7 @@ bot.action('inst', async ctx => {
                 ]
             }
         })
+        await bot.telegram.deleteMessage(chatid, msg_to_delete)
     } catch (err) {
         errMessage(err, ctx.chat.id)
     }
@@ -228,6 +226,67 @@ bot.on('callback_query', async ctx => {
             ctx.answerCbQuery('', {
                 url: important.prod_domain + nano,
                 cache_time: 600
+            })
+        }
+        else if (cdata.includes('paid-')) {
+            let nano = cdata.split('paid-')[1]
+            let id = ctx.chat.id
+            let mid = ctx.callbackQuery.message.message_id
+            let name = ctx.chat.first_name
+
+            let thisUser = await users.findOne({ chatid: id })
+            if (!thisUser) {
+                await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
+                console.log('New user Added')
+                await ctx.reply(`Hello ${name}, welcome onboarding, this is OH! MY Booster Bot, You'll be using me for getting premium shows, every show I send you will cost you 2 points, as you're newbie I gave you 10 free points.`)
+            }
+
+            let user = await users.findOne({ chatid: id })
+            if (user.points >= 2) {
+                await user.updateOne({ $inc: { points: -2 } })
+                let vid = await db.findOne({ nano })
+                await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
+                await bot.telegram.deleteMessage(id, mid)
+                setTimeout(() => {
+                    ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
+                        parse_mode: 'HTMl',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '➕ Add more', callback_data: 'add_more' },
+                                    { text: '💰 Balance', callback_data: 'points' }
+                                ]
+                            ]
+                        }
+                    })
+                }, 1000)
+
+            } else if (user.points < 2) {
+                await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video. Add more points by donating a small amount. Choose below.`, {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '» Get 100 points for $1.0', callback_data: 'inst' }],
+                            [{ text: '» Get 200 points for $1.5', callback_data: 'inst' }],
+                            [{ text: '» Get 400 points for $2.5', callback_data: 'inst' }],
+                            [{ text: '» Get 1000 points for $5.0', callback_data: 'inst' }]
+                        ]
+                    }
+                })
+            }
+        }
+
+        else if (cdata.includes('free-')) {
+            let msgid = ctx.callbackQuery.message.message_id
+            let nano = cdata.split('free-')[1]
+            let vid = await db.findOne({ nano })
+            await bot.telegram.deleteMessage(ctx.chat.id, msgid)
+            await ctx.reply(`Open the link below, stay on the site for 10 seconds and I'll inbox you the full video.`, {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '⬇ OPEN TO GET FULL VIDEO NOW', url: `www.dramastore.net/open-offer/complete/${nano}/${ctx.chat.id}/${vid.msgId}` }]
+                    ]
+                }
             })
         }
     } catch (err) {
