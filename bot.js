@@ -284,7 +284,7 @@ bot.on('callback_query', async ctx => {
             await ctx.reply(`Open the link below, stay on the site for 10 seconds and I'll inbox you the full video.`, {
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: '⬇ OPEN TO GET FULL VIDEO NOW', url: `www.dramastore.net/open-offer/complete/${nano}/${ctx.chat.id}/${vid.msgId}` }]
+                        [{ text: '⬇ OPEN TO GET FULL VIDEO NOW', url: `www.tele-offers.online/open-offer/complete/${nano}/${ctx.chat.id}/${vid.msgId}` }]
                     ]
                 }
             })
