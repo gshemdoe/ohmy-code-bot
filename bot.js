@@ -51,13 +51,20 @@ bot.start(async ctx => {
         if (ctx.startPayload) {
             let nano = ctx.startPayload
 
+            let mimi = await users.findOne({ chatid: id })
             let title = await db.findOne({ nano })
-            ctx.reply(`<b>${title.caption}</b> \n\nHow would you like to download this video?`, {
+
+            let points = null
+            if (!mimi) { points = 10 }
+            if (mimi) { points = mimi.points }
+
+
+            ctx.reply(`<b>${title.caption}</b> \n\nHow would you like to download this video? \n\n<b><i>You have: ${points} points</i></b>`, {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: '⬇ WITH POINTS (no link)', callback_data: `paid-${nano}` }],
-                        [{ text: '🆓 WITH NO POINTS (link)', callback_data: `free-${nano}` }]
+                        [{ text: '⬇ DOWNLOAD WITH POINTS (-2)', callback_data: `paid-${nano}` }],
+                        [{ text: '⬇ DOWNLOAD WITH NO POINTS', callback_data: `free-${nano}` }]
                     ]
                 }
             })
@@ -102,7 +109,7 @@ bot.command('add', async ctx => {
         let pts = Number(arr[2])
 
         let updt = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: pts } }, { new: true })
-        await bot.telegram.sendMessage(id, `Congratulations 🎉 \nYour payment is confirmed! You received ${pts} points. Your new payment balance is ${updt.points} points`)
+        await bot.telegram.sendMessage(id, `Congratulations 🎉 \nYour payment is confirmed! You received ${pts} points. Your new balance is ${updt.points} points`)
     } catch (err) {
         errMessage(err, ctx.chat.id)
     }
@@ -266,10 +273,10 @@ bot.on('callback_query', async ctx => {
                     parse_mode: 'HTML',
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: '» Get 100 points for $1.0', callback_data: 'inst' }],
-                            [{ text: '» Get 200 points for $1.5', callback_data: 'inst' }],
-                            [{ text: '» Get 400 points for $2.5', callback_data: 'inst' }],
-                            [{ text: '» Get 1000 points for $5.0', callback_data: 'inst' }]
+                            [
+                                { text: '💰 Balance', callback_data: 'points' },
+                                { text: '➕ Add More', callback_data: 'inst' }
+                            ],
                         ]
                     }
                 })
@@ -280,15 +287,18 @@ bot.on('callback_query', async ctx => {
             let msgid = ctx.callbackQuery.message.message_id
             let nano = cdata.split('free-')[1]
             let vid = await db.findOne({ nano })
+            let caption = vid.caption
+            let title = caption.split('Full Video | ')[1]
             await bot.telegram.deleteMessage(ctx.chat.id, msgid)
-            let our_link = await ctx.reply(`Open the link below, stay on the site for 10 seconds and I'll inbox you the full video.`, {
+            let our_link = await ctx.reply(`Open our dating site, stay on the site for at least 10 seconds and the full video <b>(${title})</b> will be sent to you automatically.`, {
+                parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: '⬇ OPEN TO GET FULL VIDEO NOW', url: `www.tele-offers.online/open-offer/complete/${nano}/${ctx.chat.id}/${vid.msgId}` }]
+                        [{ text: '⬇ OPEN TO GET THE FULL VIDEO', url: `www.tele-offers.online/open-offer/complete/${nano}/${ctx.chat.id}/${vid.msgId}` }]
                     ]
                 }
             })
-            setTimeout(()=> {
+            setTimeout(() => {
                 bot.telegram.deleteMessage(ctx.chat.id, our_link.message_id)
             }, 60000)
         }
