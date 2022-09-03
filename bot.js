@@ -99,6 +99,33 @@ bot.command('offer', async ctx => {
     }
 })
 
+bot.command('/india', async ctx => {
+    try {
+        let all_users = await users.find()
+
+        all_users.forEach((u, index)=> {
+            setTimeout(()=> {
+                bot.telegram.copyMessage(u.chatid, -1001586042518, 2676, {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {text: '✨ CLAIM Rs. 25,000 NOW ✨', url: 'https://rebrand.ly/get-rs-25000'}
+                            ]
+                        ]
+                    }
+                }).catch((err)=> {
+                    if(err.message.includes('blocked')) {
+                        users.findOneAndDelete({chatid: u.chatid})
+                        .then(()=> {console.log(u.chatid + ' is deleted')})
+                    }
+                })
+            }, index * 75)
+        })
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
 
 bot.command('add', async ctx => {
     let txt = ctx.message.text
