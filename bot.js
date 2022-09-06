@@ -5,6 +5,7 @@ const db = require('./database/db')
 const users = require('./database/users')
 const { nanoid } = require('nanoid')
 const offer = require('./database/offers')
+const gifsModel = require('./database/gif')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -99,32 +100,32 @@ bot.command('offer', async ctx => {
     }
 })
 
-bot.command('/india', async ctx => {
-    try {
-        let all_users = await users.find()
+// bot.command('/india', async ctx => {
+//     try {
+//         let all_users = await users.find()
 
-        all_users.forEach((u, index)=> {
-            setTimeout(()=> {
-                bot.telegram.copyMessage(u.chatid, -1001586042518, 2676, {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                {text: '✨ CLAIM Rs. 25,000 NOW ✨', url: 'https://rebrand.ly/get-rs-25000'}
-                            ]
-                        ]
-                    }
-                }).catch((err)=> {
-                    if(err.message.includes('blocked')) {
-                        users.findOneAndDelete({chatid: u.chatid})
-                        .then(()=> {console.log(u.chatid + ' is deleted')})
-                    }
-                })
-            }, index * 75)
-        })
-    } catch (err) {
-        console.log(err.message)
-    }
-})
+//         all_users.forEach((u, index)=> {
+//             setTimeout(()=> {
+//                 bot.telegram.copyMessage(u.chatid, -1001586042518, 2676, {
+//                     reply_markup: {
+//                         inline_keyboard: [
+//                             [
+//                                 {text: '✨ CLAIM Rs. 25,000 NOW ✨', url: 'https://rebrand.ly/get-rs-25000'}
+//                             ]
+//                         ]
+//                     }
+//                 }).catch((err)=> {
+//                     if(err.message.includes('blocked')) {
+//                         users.findOneAndDelete({chatid: u.chatid})
+//                         .then(()=> {console.log(u.chatid + ' is deleted')})
+//                     }
+//                 })
+//             }, index * 75)
+//         })
+//     } catch (err) {
+//         console.log(err.message)
+//     }
+// })
 
 
 bot.command('add', async ctx => {
@@ -148,6 +149,10 @@ bot.on('channel_post', async ctx => {
             let rpId = ctx.channelPost.reply_to_message.message_id
             let cdata = ctx.channelPost.text
 
+            await gifsModel.create({
+                nano: cdata,
+                gifId: rpId
+            })
             await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
                 reply_markup: {
                     inline_keyboard: [
