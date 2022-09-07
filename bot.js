@@ -64,7 +64,14 @@ bot.start(async ctx => {
             if (nano.includes('fromWeb-')) {
                 let webNano = nano.split('fromWeb-')[1]
                 let vid = await db.findOne({ nano: webNano })
-                await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId)
+                await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId, {
+                    reply_markup: {
+                        inline_keyboard: [[
+                            {text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat'},
+                            {text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match'},
+                        ]]
+                    }
+                })
             }
 
             if (!nano.includes('fromWeb-')) {
@@ -72,7 +79,14 @@ bot.start(async ctx => {
                 if (user.points >= 2) {
                     await user.updateOne({ $inc: { points: -2 } })
                     let vid = await db.findOne({ nano })
-                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
+                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+                        reply_markup: {
+                            inline_keyboard: [[
+                                {text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat'},
+                                {text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match'},
+                            ]]
+                        }
+                    })
                     setTimeout(() => {
                         ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remained with ${user.points - 2} points.</b>`, {
                             parse_mode: 'HTMl',
