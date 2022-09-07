@@ -52,38 +52,55 @@ bot.start(async ctx => {
     let name = ctx.chat.first_name
 
     try {
+        let thisUser = await users.findOne({ chatid: id })
+        if (!thisUser) {
+            await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
+            console.log('New user Added')
+        }
+
         if (ctx.startPayload) {
             let nano = ctx.startPayload
 
-            let mimi = await users.findOne({ chatid: id })
-            let title = await db.findOne({ nano })
+            if (nano.includes('fromWeb-')) {
+                let webNano = nano.split('fromWeb-')[1]
+                let vid = await db.findOne({ nano: webNano })
+                await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId)
+            }
 
-            let points = null
-            if (!mimi) { points = 10 }
-            if (mimi) { points = mimi.points }
+            if (!nano.includes('fromWeb-')) {
+                let user = await users.findOne({ chatid: id })
+                if (user.points >= 2) {
+                    await user.updateOne({ $inc: { points: -2 } })
+                    let vid = await db.findOne({ nano })
+                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
+                    setTimeout(() => {
+                        ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
+                            parse_mode: 'HTMl',
+                            reply_markup: {
+                                inline_keyboard: [
+                                    [
+                                        { text: '➕ Add more', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` },
+                                        { text: '💰 Balance', callback_data: 'points' }
+                                    ]
+                                ]
+                            }
+                        })
+                    }, 1000)
 
-
-            ctx.reply(`<b>${title.caption}</b> \n\nHow would you like to download this video? \n\n<b><i>You have: ${points} points</i></b>`, {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: '⬇ DOWNLOAD WITH POINTS (-2)', callback_data: `paid-${nano}` }],
-                        [{ text: '⬇ DOWNLOAD WITH NO POINTS', callback_data: `free-${nano}` }]
-                    ]
+                } 
+                else if (user.points < 2) {
+                    await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video. Open the link below to add more points.`, {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '➕ Open to Add More Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
+                                ],
+                            ]
+                        }
+                    })
                 }
-            })
-        }
-
-        if (!ctx.startPayload) {
-            await ctx.reply(`Hello, welcome ${ctx.chat.first_name}, to download Full Videos use the links provided on "OH MY" channel under the PREVIEW videos.`, {
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            { text: "Open OH MY 💋 Channel", url: "https://t.me/joinchat/V6CN2nFJKa1JezKS" }
-                        ]
-                    ]
-                }
-            })
+            }
         }
     } catch (err) {
         errMessage(err, id)
@@ -169,10 +186,10 @@ bot.on('channel_post', async ctx => {
 
             // copy to xzone
             await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId)
-            let vid = await db.findOne({nano: cdata})
+            let vid = await db.findOne({ nano: cdata })
             await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
                 reply_markup: {
-                    inline_keyboard: [[{text: '🔓 Forward or Save This Video', callback_data: `getFull-${cdata}`}]]
+                    inline_keyboard: [[{ text: '🔓 Forward or Save This Video', callback_data: `getFull-${cdata}` }]]
                 }
             })
         }
