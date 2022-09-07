@@ -74,7 +74,7 @@ bot.start(async ctx => {
                     let vid = await db.findOne({ nano })
                     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId)
                     setTimeout(() => {
-                        ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remain with ${user.points - 2} points.</b>`, {
+                        ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remained with ${user.points - 2} points.</b>`, {
                             parse_mode: 'HTMl',
                             reply_markup: {
                                 inline_keyboard: [
