@@ -134,6 +134,16 @@ bot.command('offer', async ctx => {
     }
 })
 
+// bot.command('mama', async ctx=> {
+//     let zote = await db.find()
+
+//     zote.forEach((v, i)=> {
+//         setTimeout(()=> {
+//             bot.telegram.copyMessage(important.xzone, important.ohmyDB, v.msgId)
+//         }, 3500 * i)
+//     })
+// })
+
 // bot.command('/india', async ctx => {
 //     try {
 //         let all_users = await users.find()
@@ -212,7 +222,10 @@ bot.on('channel_post', async ctx => {
             await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
                 disable_notification: true,
                 reply_markup: {
-                    inline_keyboard: [[{ text: '🔓 Forward or Save This Video', url: `${important.prod_domain}${cdata}` }]]
+                    inline_keyboard: [[
+                        { text: `😍 Online Dating`, url: `https://rebrand.ly/online-dating-find-your-match` },
+                        { text: `🔞 Video Chatting`, url: `https://rebrand.ly/sex-video-chat` },
+                ]]
                 }
             })
         }
