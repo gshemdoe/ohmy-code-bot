@@ -184,6 +184,15 @@ bot.on('channel_post', async ctx => {
             let rpId = ctx.channelPost.reply_to_message.message_id
             let cdata = ctx.channelPost.text
 
+            let posts = [
+                '62c84d54da06342665e31fb7',
+                '62ca86111afa2af6f7a1026c',
+                '62cd8fbe9de0786aafdb98b7',
+                '62df23671eef6dabf5feecde'
+            ]
+            let rrnp = Math.floor(Math.random() * posts.length)
+            let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${cdata}`
+
             await gifsModel.create({
                 nano: cdata,
                 gifId: rpId
@@ -191,19 +200,17 @@ bot.on('channel_post', async ctx => {
             await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
                 reply_markup: {
                     inline_keyboard: [
-                        [
-                            { text: '⬇ DOWNLOAD FULL VIDEO', callback_data: `getFull-${cdata}` }
-                        ]
+                        [{ text: '⬇ GET FULL VIDEO (OPT. 1)', url: important.prod_domain + cdata }],
+                        [{ text: '⬇ GET FULL VIDEO (OPT. 2)', url:  op2link}]
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
 
             // copy to xzone
-            await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId)
             let vid = await db.findOne({ nano: cdata })
             await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
                 reply_markup: {
-                    inline_keyboard: [[{ text: '🔓 Forward or Save This Video', callback_data: `getFull-${cdata}` }]]
+                    inline_keyboard: [[{ text: '🔓 Forward or Save This Video', url: `${important.prod_domain}${cdata}` }]]
                 }
             })
         }
