@@ -169,7 +169,7 @@ bot.on('channel_post', async ctx => {
 
             // copy to xzone
             await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId)
-            let vid = db.findOne({nano: cdata})
+            let vid = await db.findOne({nano: cdata})
             await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
                 reply_markup: {
                     inline_keyboard: [[{text: '🔓 Forward or Save This Video', callback_data: `getFull-${cdata}`}]]
