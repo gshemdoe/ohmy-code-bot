@@ -198,6 +198,7 @@ bot.on('channel_post', async ctx => {
                 gifId: rpId
             })
             await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
+                disable_notification: true,
                 reply_markup: {
                     inline_keyboard: [
                         [{ text: '⬇ GET FULL VIDEO (OPT. 1)', url: important.prod_domain + cdata }],
@@ -209,6 +210,7 @@ bot.on('channel_post', async ctx => {
             // copy to xzone
             let vid = await db.findOne({ nano: cdata })
             await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
+                disable_notification: true,
                 reply_markup: {
                     inline_keyboard: [[{ text: '🔓 Forward or Save This Video', url: `${important.prod_domain}${cdata}` }]]
                 }
