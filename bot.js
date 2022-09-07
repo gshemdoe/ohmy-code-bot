@@ -6,6 +6,7 @@ const users = require('./database/users')
 const { nanoid } = require('nanoid')
 const offer = require('./database/offers')
 const gifsModel = require('./database/gif')
+const reqModel = require('./database/requestersDb')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -25,7 +26,9 @@ const important = {
     prem_channel: -1001470139866,
     local_domain: 't.me/rss_shemdoe_bot?start=',
     prod_domain: 't.me/ohmychannelV2bot?start=',
-    shemdoe: 741815228
+    shemdoe: 741815228,
+    xzone: -1001740624527,
+    ohmyDB: -1001586042518
 }
 
 function errMessage(err, id) {
@@ -128,6 +131,7 @@ bot.command('offer', async ctx => {
 // })
 
 
+
 bot.command('add', async ctx => {
     let txt = ctx.message.text
 
@@ -162,6 +166,15 @@ bot.on('channel_post', async ctx => {
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
+
+            // copy to xzone
+            await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId)
+            let vid = db.findOne({nano: cdata})
+            await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
+                reply_markup: {
+                    inline_keyboard: [[{text: '🔓 Forward or Save This Video', callback_data: `getFull-${cdata}`}]]
+                }
+            })
         }
     }
 })
@@ -336,6 +349,30 @@ bot.on('callback_query', async ctx => {
         }
     } catch (err) {
         errMessage(err, ctx.chat.id)
+    }
+})
+
+bot.on('chat_join_request', async ctx => {
+    let chatid = ctx.chatJoinRequest.from.id
+    let channel_id = ctx.chatJoinRequest.chat.id
+
+    try {
+        let user = await reqModel.findOne({ chatid })
+        if (!user) {
+            await reqModel.create({
+                chatid
+            })
+            console.log('New requster added to database')
+        }
+
+        if (channel_id == important.xzone) {
+            await bot.telegram.approveChatJoinRequest(important.xzone, chatid)
+            await bot.telegram.sendMessage(chatid, 'Congratulations! 🎉 Your request to join XZONE is approved', {
+                reply_markup: { inline_keyboard: [[{ text: 'Enter XZONE', url: 'https://t.me/+OsCEEmeM--diNzU0' }]] }
+            })
+        }
+    } catch (err) {
+        errMessage(err, chatid)
     }
 })
 
