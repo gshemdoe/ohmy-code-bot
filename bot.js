@@ -322,7 +322,7 @@ bot.on('callback_query', async ctx => {
             let caption = vid.caption
             let title = caption.split('Full Video | ')[1]
             await bot.telegram.deleteMessage(ctx.chat.id, msgid)
-            let our_link = await ctx.reply(`Open our dating site, stay on the site for at least 10 seconds and the full video <b>(${title})</b> will be sent to you automatically.`, {
+            let our_link = await ctx.reply(`Open our sex video chat, stay on the site for at least 10 seconds and the full video <b>(${title})</b> will be sent to you automatically.`, {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
