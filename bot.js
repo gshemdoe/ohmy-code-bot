@@ -148,13 +148,16 @@ bot.command('offer', async ctx => {
 bot.command('/broadcast', async ctx => {
     let myId = ctx.chat.id
     let txt = ctx.message.text
-    let msg_id = Number(txt.split('/broadcast-')[1]).trim()
+    let msg_id = Number(txt.split('/broadcast-')[1].trim())
     if (myId == important.shemdoe || myId == important.halot) {
         try {
             let all_users = await users.find()
 
             all_users.forEach((u, index) => {
                 setTimeout(() => {
+                    if(index == all_users.length - 1) {
+                        ctx.reply('Done sending offers')
+                    }
                     bot.telegram.copyMessage(u.chatid, -1001586042518, msg_id, {
                         reply_markup: {
                             inline_keyboard: [
