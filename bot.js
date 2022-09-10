@@ -240,6 +240,25 @@ bot.on('channel_post', async ctx => {
             })
         }
     }
+    if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
+        let fid = ctx.channelPost.video.file_unique_id
+        let file_id = ctx.channelPost.video.file_id
+        let cap = ctx.channelPost.caption
+        let cap_ent = ctx.channelPost.caption_entities
+        let caption = cap.split(' - With')[0].trim()
+        let msgId = ctx.channelPost.message_id
+
+        await db.create({
+            caption_entities: cap_ent,
+            uniqueId: fid,
+            file_id,
+            caption,
+            nano: fid,
+            fileType: 'video',
+            msgId
+        })
+        await ctx.reply(`<code>${fid}</code>`, {parse_mode: 'HTML'})
+    } 
 })
 
 bot.action('points', async ctx => {
