@@ -27,6 +27,7 @@ const important = {
     local_domain: 't.me/rss_shemdoe_bot?start=',
     prod_domain: 't.me/ohmychannelV2bot?start=',
     shemdoe: 741815228,
+    halot: 1473393723,
     xzone: -1001740624527,
     ohmyDB: -1001586042518
 }
@@ -67,8 +68,8 @@ bot.start(async ctx => {
                 await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId, {
                     reply_markup: {
                         inline_keyboard: [[
-                            {text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat'},
-                            {text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match'},
+                            { text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
+                            { text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match' },
                         ]]
                     }
                 })
@@ -82,8 +83,8 @@ bot.start(async ctx => {
                     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
                         reply_markup: {
                             inline_keyboard: [[
-                                {text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat'},
-                                {text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match'},
+                                { text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
+                                { text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match' },
                             ]]
                         }
                     })
@@ -101,7 +102,7 @@ bot.start(async ctx => {
                         })
                     }, 1000)
 
-                } 
+                }
                 else if (user.points < 2) {
                     await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video. Open the link below to add more points.`, {
                         parse_mode: 'HTML',
@@ -144,32 +145,38 @@ bot.command('offer', async ctx => {
 //     })
 // })
 
-// bot.command('/india', async ctx => {
-//     try {
-//         let all_users = await users.find()
+bot.command('/broadcast', async ctx => {
+    let myId = ctx.chat.id
+    let txt = ctx.message.text
+    let msg_id = Number(txt.split('/broadcast-')[1]).trim()
+    if (myId == important.shemdoe || myId == important.halot) {
+        try {
+            let all_users = await users.find()
 
-//         all_users.forEach((u, index)=> {
-//             setTimeout(()=> {
-//                 bot.telegram.copyMessage(u.chatid, -1001586042518, 2676, {
-//                     reply_markup: {
-//                         inline_keyboard: [
-//                             [
-//                                 {text: '✨ CLAIM Rs. 25,000 NOW ✨', url: 'https://rebrand.ly/get-rs-25000'}
-//                             ]
-//                         ]
-//                     }
-//                 }).catch((err)=> {
-//                     if(err.message.includes('blocked')) {
-//                         users.findOneAndDelete({chatid: u.chatid})
-//                         .then(()=> {console.log(u.chatid + ' is deleted')})
-//                     }
-//                 })
-//             }, index * 75)
-//         })
-//     } catch (err) {
-//         console.log(err.message)
-//     }
-// })
+            all_users.forEach((u, index) => {
+                setTimeout(() => {
+                    bot.telegram.copyMessage(u.chatid, -1001586042518, msg_id, {
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '📞 Video call Alexis Tae now', url: 'https://rebrand.ly/sex-video-chat' }
+                                ]
+                            ]
+                        }
+                    }).catch((err) => {
+                        if (err.message.includes('blocked')) {
+                            users.findOneAndDelete({ chatid: u.chatid })
+                                .then(() => { console.log(u.chatid + ' is deleted') })
+                        }
+                    })
+                }, index * 75)
+            })
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
+})
 
 
 
@@ -212,7 +219,7 @@ bot.on('channel_post', async ctx => {
                 reply_markup: {
                     inline_keyboard: [
                         [{ text: '⬇ GET FULL VIDEO (OPT. 1)', url: important.prod_domain + cdata }],
-                        [{ text: '⬇ GET FULL VIDEO (OPT. 2)', url:  op2link}]
+                        [{ text: '⬇ GET FULL VIDEO (OPT. 2)', url: op2link }]
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
@@ -225,7 +232,7 @@ bot.on('channel_post', async ctx => {
                     inline_keyboard: [[
                         { text: `😍 Online Dating`, url: `https://rebrand.ly/online-dating-find-your-match` },
                         { text: `🔞 Video Chatting`, url: `https://rebrand.ly/sex-video-chat` },
-                ]]
+                    ]]
                 }
             })
         }
