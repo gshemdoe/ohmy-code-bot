@@ -253,7 +253,7 @@ bot.on('channel_post', async ctx => {
             uniqueId: fid,
             fileId: file_id,
             caption,
-            nano: fid,
+            nano: fid + msgId,
             fileType: 'video',
             msgId
         })
