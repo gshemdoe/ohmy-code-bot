@@ -257,7 +257,7 @@ bot.on('channel_post', async ctx => {
             fileType: 'video',
             msgId
         })
-        await ctx.reply(`<code>${fid}</code>`, {parse_mode: 'HTML'})
+        await ctx.reply(`<code>${fid + msgId}</code>`, {parse_mode: 'HTML'})
     } 
 })
 
