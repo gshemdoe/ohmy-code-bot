@@ -251,7 +251,7 @@ bot.on('channel_post', async ctx => {
         await db.create({
             caption_entities: cap_ent,
             uniqueId: fid,
-            file_id,
+            fileId: file_id,
             caption,
             nano: fid,
             fileType: 'video',
