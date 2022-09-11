@@ -172,7 +172,7 @@ bot.command('/broadcast', async ctx => {
                                 .then(() => { console.log(u.chatid + ' is deleted') })
                         }
                     })
-                }, index * 75)
+                }, index * 40)
             })
         } catch (err) {
             console.log(err.message)
