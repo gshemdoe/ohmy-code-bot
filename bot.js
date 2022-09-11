@@ -109,7 +109,8 @@ bot.start(async ctx => {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    { text: '➕ Open to Add More Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
+                                    {text: '✨ My Points', callback_data: 'points'},
+                                    { text: '➕ Add Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
                                 ],
                             ]
                         }
