@@ -227,18 +227,6 @@ bot.on('channel_post', async ctx => {
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
-
-            // copy to xzone
-            let vid = await db.findOne({ nano: cdata })
-            await bot.telegram.copyMessage(important.xzone, important.ohmyDB, vid.msgId, {
-                disable_notification: true,
-                reply_markup: {
-                    inline_keyboard: [[
-                        { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
-                        { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
-                    ]]
-                }
-            })
         }
     }
     if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
@@ -248,6 +236,7 @@ bot.on('channel_post', async ctx => {
         let cap_ent = ctx.channelPost.caption_entities
         let caption = cap.split(' - With')[0].trim()
         let msgId = ctx.channelPost.message_id
+        let tday = new Date().toLocaleDateString('en-us')
 
         await db.create({
             caption_entities: cap_ent,
@@ -257,6 +246,17 @@ bot.on('channel_post', async ctx => {
             nano: fid + msgId,
             fileType: 'video',
             msgId
+        })
+        await bot.telegram.copyMessage(important.xzone, important.ohmyDB, msgId, {
+            caption: `<b>${cap}\n\n📅Released: ${tday}</b>`,
+            parse_mode: 'HTML',
+            disable_notification: true,
+                reply_markup: {
+                    inline_keyboard: [[
+                        { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
+                        { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
+                    ]]
+                }
         })
         await ctx.reply(`<code>${fid + msgId}</code>`, {parse_mode: 'HTML'})
     } 
