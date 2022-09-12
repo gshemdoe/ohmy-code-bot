@@ -68,8 +68,8 @@ bot.start(async ctx => {
                 await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId, {
                     reply_markup: {
                         inline_keyboard: [[
-                            { text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
-                            { text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match' },
+                            { text: 'Join Sex Chat', url: 'https://rebrand.ly/sex-video-chat' },
+                            { text: 'Find Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
                         ]]
                     }
                 })
@@ -234,8 +234,8 @@ bot.on('channel_post', async ctx => {
                 disable_notification: true,
                 reply_markup: {
                     inline_keyboard: [[
-                        { text: `😍 Online Dating`, url: `https://rebrand.ly/online-dating-find-your-match` },
-                        { text: `🔞 Video Chatting`, url: `https://rebrand.ly/sex-video-chat` },
+                        { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
+                        { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
                     ]]
                 }
             })
