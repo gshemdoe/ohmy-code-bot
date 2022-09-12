@@ -248,7 +248,7 @@ bot.on('channel_post', async ctx => {
             msgId
         })
         await bot.telegram.copyMessage(important.xzone, important.ohmyDB, msgId, {
-            caption: `<b>${cap}\n\n📅Released: ${tday}</b>`,
+            caption: `<b>${cap}\n\n📅 Aired On: <mono>${tday}</mono></b>`,
             parse_mode: 'HTML',
             disable_notification: true,
                 reply_markup: {
