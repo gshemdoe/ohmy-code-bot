@@ -159,14 +159,14 @@ bot.command('/broadcast', async ctx => {
                     if(index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
-                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id, {
-                        reply_markup: {
-                            inline_keyboard: [
-                                [
-                                    { text: '❤ Contact Anna 💋', url: 'https://rebrand.ly/date-anna9' }
-                                ]
-                            ]
-                        }
+                    bot.telegram.copyMessage(u.chatid, important.ohmyDB, msg_id, {
+                        // reply_markup: {
+                        //     inline_keyboard: [
+                        //         [
+                        //             { text: '❤ Contact Anna 💋', url: 'https://rebrand.ly/date-anna9' }
+                        //         ]
+                        //     ]
+                        // }
                     }).catch((err) => {
                         if (err.message.includes('blocked')) {
                             users.findOneAndDelete({ chatid: u.chatid })
