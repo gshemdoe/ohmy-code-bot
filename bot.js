@@ -209,7 +209,8 @@ bot.on('channel_post', async ctx => {
                 '62c84d54da06342665e31fb7',
                 '62ca86111afa2af6f7a1026c',
                 '62cd8fbe9de0786aafdb98b7',
-                '62df23671eef6dabf5feecde'
+                '62df23671eef6dabf5feecde',
+                '63212e1f6eeba4e82a45bd27'
             ]
             let rrnp = Math.floor(Math.random() * posts.length)
             let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${cdata}`
