@@ -237,7 +237,7 @@ bot.on('channel_post', async ctx => {
         let cap_ent = ctx.channelPost.caption_entities
         let caption = cap.split(' - With')[0].trim()
         let msgId = ctx.channelPost.message_id
-        let tday = new Date().toLocaleDateString('en-us')
+        let tday = new Date().toDateString()
 
         await db.create({
             caption_entities: cap_ent,
