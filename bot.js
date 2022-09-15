@@ -65,15 +65,51 @@ bot.start(async ctx => {
             if (nano.includes('fromWeb-')) {
                 let webNano = nano.split('fromWeb-')[1]
                 let vid = await db.findOne({ nano: webNano })
-                await bot.telegram.copyMessage(id, important.ohmyDB, vid.msgId, {
-                    reply_markup: {
-                        inline_keyboard: [[
-                            { text: 'Join Sex Chat', url: 'https://rebrand.ly/sex-video-chat' },
-                            { text: 'Find Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
-                        ]]
-                    }
-                })
+
+                let user = await users.findOne({ chatid: id })
+                if (user.points >= 2) {
+                    await user.updateOne({ $inc: { points: -2 } })
+                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+                        reply_markup: {
+                            inline_keyboard: [[
+                                { text: 'Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
+                                { text: 'Browse Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
+                            ]]
+                        }
+                    })
+                    setTimeout(() => {
+                        ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remained with ${user.points - 2} points.</b>`, {
+                            parse_mode: 'HTMl',
+                            reply_markup: {
+                                inline_keyboard: [
+                                    [
+                                        { text: '➕ Add more', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` },
+                                        { text: '💰 Balance', callback_data: 'points' }
+                                    ]
+                                ]
+                            }
+                        })
+                    }, 1000)
+
+                }
+                else if (user.points < 2) {
+                    await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video, use option 1 or open the link below to add more points.`, {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '✨ My Points', callback_data: 'points' },
+                                    { text: '➕ Add Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
+                                ],
+                            ]
+                        }
+                    })
+                }
+
             }
+
+
+
 
             if (!nano.includes('fromWeb-')) {
                 let thvid = await db.findOne({ nano })
@@ -84,7 +120,7 @@ bot.start(async ctx => {
                 await ctx.reply(msg2user, {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: [[{text: '⬇ OPEN TO GET FULL VIDEO', url: `http://tele-offers.online/open-offer/complete/${nano}/${id}/${thmsid}`}]]
+                        inline_keyboard: [[{ text: '⬇ OPEN TO GET FULL VIDEO', url: `http://tele-offers.online/open-offer/complete/${nano}/${id}/${thmsid}` }]]
                     }
                 })
 
@@ -168,7 +204,7 @@ bot.command('/broadcast', async ctx => {
 
             all_users.forEach((u, index) => {
                 setTimeout(() => {
-                    if(index == all_users.length - 1) {
+                    if (index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
                     bot.telegram.copyMessage(u.chatid, important.ohmyDB, msg_id, {
@@ -264,15 +300,15 @@ bot.on('channel_post', async ctx => {
             caption: `<b>${cap}\n\n📅 Aired On: <code>${tday}</code></b>`,
             parse_mode: 'HTML',
             disable_notification: true,
-                reply_markup: {
-                    inline_keyboard: [[
-                        { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
-                        { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
-                    ]]
-                }
+            reply_markup: {
+                inline_keyboard: [[
+                    { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
+                    { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
+                ]]
+            }
         })
-        await ctx.reply(`<code>${fid + msgId}</code>`, {parse_mode: 'HTML'})
-    } 
+        await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
+    }
 })
 
 bot.action('points', async ctx => {
