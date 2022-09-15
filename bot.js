@@ -76,46 +76,58 @@ bot.start(async ctx => {
             }
 
             if (!nano.includes('fromWeb-')) {
-                let user = await users.findOne({ chatid: id })
-                if (user.points >= 2) {
-                    await user.updateOne({ $inc: { points: -2 } })
-                    let vid = await db.findOne({ nano })
-                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
-                        reply_markup: {
-                            inline_keyboard: [[
-                                { text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
-                                { text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match' },
-                            ]]
-                        }
-                    })
-                    setTimeout(() => {
-                        ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remained with ${user.points - 2} points.</b>`, {
-                            parse_mode: 'HTMl',
-                            reply_markup: {
-                                inline_keyboard: [
-                                    [
-                                        { text: '➕ Add more', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` },
-                                        { text: '💰 Balance', callback_data: 'points' }
-                                    ]
-                                ]
-                            }
-                        })
-                    }, 1000)
+                let thvid = await db.findOne({ nano })
+                let thtitle = thvid.caption
+                let thmsid = thvid.msgId
+                let msg2user = `<b>${thtitle}</b> \n\nView our girls profile below, stay on the site for at least 10 seconds and and the full video will be sent to you automatically`
 
-                }
-                else if (user.points < 2) {
-                    await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video. Open the link below to add more points.`, {
-                        parse_mode: 'HTML',
-                        reply_markup: {
-                            inline_keyboard: [
-                                [
-                                    {text: '✨ My Points', callback_data: 'points'},
-                                    { text: '➕ Add Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
-                                ],
-                            ]
-                        }
-                    })
-                }
+                await ctx.reply(msg2user, {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [[{text: '⬇ OPEN TO GET FULL VIDEO', url: `http://tele-offers.online/open-offer/complete/${nano}/${id}/${thmsid}`}]]
+                    }
+                })
+
+                // let user = await users.findOne({ chatid: id })
+                // if (user.points >= 2) {
+                //     await user.updateOne({ $inc: { points: -2 } })
+                //     let vid = await db.findOne({ nano })
+                //     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+                //         reply_markup: {
+                //             inline_keyboard: [[
+                //                 { text: '🔞 Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
+                //                 { text: '😍 Online Dating', url: 'https://rebrand.ly/online-dating-find-your-match' },
+                //             ]]
+                //         }
+                //     })
+                //     setTimeout(() => {
+                //         ctx.reply(`You got the file and 2 points deducted from your points balance. \n\n<b>You remained with ${user.points - 2} points.</b>`, {
+                //             parse_mode: 'HTMl',
+                //             reply_markup: {
+                //                 inline_keyboard: [
+                //                     [
+                //                         { text: '➕ Add more', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` },
+                //                         { text: '💰 Balance', callback_data: 'points' }
+                //                     ]
+                //                 ]
+                //             }
+                //         })
+                //     }, 1000)
+
+                // }
+                // else if (user.points < 2) {
+                //     await ctx.reply(`Hey <b>${ctx.chat.first_name}</b>, You don't have enough points to get the video. Open the link below to add more points.`, {
+                //         parse_mode: 'HTML',
+                //         reply_markup: {
+                //             inline_keyboard: [
+                //                 [
+                //                     {text: '✨ My Points', callback_data: 'points'},
+                //                     { text: '➕ Add Points', url: `https://font5.net/blog/post.html?id=62c1715eff0a4608ebd38ac2#adding-points-ohmy-userid=OH${id}` }
+                //                 ],
+                //             ]
+                //         }
+                //     })
+                // }
             }
         }
     } catch (err) {
