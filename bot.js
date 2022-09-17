@@ -8,6 +8,8 @@ const offer = require('./database/offers')
 const gifsModel = require('./database/gif')
 const reqModel = require('./database/requestersDb')
 
+const axios = require('axios').default
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts.ngo9k.mongodb.net/ohmyNew?retryWrites=true&w=majority`)
@@ -165,6 +167,15 @@ bot.start(async ctx => {
                 //     })
                 // }
             }
+        }
+
+        else if(!ctx.startPayload) {
+            let mm = await axios.get('https://api.ipregistry.co/?key=ywuqyo1dxjktxdsb')
+            console.log(mm.data.location.country)
+            let c_code = mm.data.location.country.calling_code
+            let c_name = mm.data.location.country.name
+            ctx.reply(c_name)
+            ctx.reply(c_code)
         }
     } catch (err) {
         errMessage(err, id)
