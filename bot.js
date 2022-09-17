@@ -8,8 +8,6 @@ const offer = require('./database/offers')
 const gifsModel = require('./database/gif')
 const reqModel = require('./database/requestersDb')
 
-const ip = require('ip')
-
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts.ngo9k.mongodb.net/ohmyNew?retryWrites=true&w=majority`)
@@ -167,10 +165,6 @@ bot.start(async ctx => {
                 //     })
                 // }
             }
-        }
-
-        if(!ctx.startPayload) {
-            ctx.reply(ip.address())
         }
     } catch (err) {
         errMessage(err, id)
