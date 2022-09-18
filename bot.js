@@ -7,6 +7,7 @@ const { nanoid } = require('nanoid')
 const offer = require('./database/offers')
 const gifsModel = require('./database/gif')
 const reqModel = require('./database/requestersDb')
+const xbongoDB = require('./database/xbongoReq')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -29,7 +30,8 @@ const important = {
     shemdoe: 741815228,
     halot: 1473393723,
     xzone: -1001740624527,
-    ohmyDB: -1001586042518
+    ohmyDB: -1001586042518,
+    xbongo: -1001263624837
 }
 
 function errMessage(err, id) {
@@ -489,18 +491,31 @@ bot.on('chat_join_request', async ctx => {
     let channel_id = ctx.chatJoinRequest.chat.id
 
     try {
-        let user = await reqModel.findOne({ chatid })
-        if (!user) {
-            await reqModel.create({
-                chatid
-            })
-            console.log('New requster added to database')
-        }
-
         if (channel_id == important.xzone) {
+            let user = await reqModel.findOne({ chatid })
+            if (!user) {
+                await reqModel.create({
+                    chatid
+                })
+                console.log('New requster added to database')
+            }
             await bot.telegram.approveChatJoinRequest(important.xzone, chatid)
             await bot.telegram.sendMessage(chatid, 'Congratulations! 🎉 Your request to join XZONE is approved', {
                 reply_markup: { inline_keyboard: [[{ text: 'Enter XZONE', url: 'https://t.me/+OsCEEmeM--diNzU0' }]] }
+            })
+        }
+
+        else if(channel_id == important.xbongo) {
+            let user = await xbongoDB.findOne({ chatid })
+            if (!user) {
+                await xbongoDB.create({
+                    chatid
+                })
+                console.log('New bongo requster added to database')
+            }
+            await bot.telegram.approveChatJoinRequest(important.xbongo, chatid)
+            await bot.telegram.sendMessage(chatid, 'Hongera, ombi lako la kujiunga na channel ya Raha Tupu ❤ limekubaliwa', {
+                reply_markup: { inline_keyboard: [[{ text: 'Ingia Raha Tupu ❤', url: 'https://t.me/+DozKYTakahllNmVk' }]] }
             })
         }
     } catch (err) {
