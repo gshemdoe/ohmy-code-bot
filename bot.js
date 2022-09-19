@@ -202,22 +202,24 @@ bot.command('/broadcast', async ctx => {
     let msg_id = Number(txt.split('/broadcast-')[1].trim())
     if (myId == important.shemdoe || myId == important.halot) {
         try {
-            let all_users = await users.find()
+            let all_users = await reqModel.find()
 
             all_users.forEach((u, index) => {
                 setTimeout(() => {
                     if (index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
-                    bot.telegram.copyMessage(u.chatid, important.ohmyDB, msg_id, {
-                        // reply_markup: {
-                        //     inline_keyboard: [
-                        //         [
-                        //             { text: '❤ Contact Anna 💋', url: 'https://rebrand.ly/date-anna9' }
-                        //         ]
-                        //     ]
-                        // }
-                    }).catch((err) => {
+                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id, {
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '📺 Watch Eva Elfie Naked Live ❤', url: 'https://bit.ly/oh-free-live-sex' }
+                                ]
+                            ]
+                        }
+                    })
+                    .then(()=> console.log('Offer sent to '+ u.chatid))
+                    .catch((err) => {
                         if (err.message.includes('blocked')) {
                             users.findOneAndDelete({ chatid: u.chatid })
                                 .then(() => { console.log(u.chatid + ' is deleted') })
