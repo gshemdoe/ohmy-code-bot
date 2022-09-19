@@ -117,7 +117,7 @@ bot.start(async ctx => {
                 let thvid = await db.findOne({ nano })
                 let thtitle = thvid.caption
                 let thmsid = thvid.msgId
-                let msg2user = `<b>${thtitle}</b> \n\nView our girls profile below, stay on the site for at least 10 seconds and and the full video will be sent to you automatically`
+                let msg2user = `<b>${thtitle}</b> \n\nParticipate to stand a chance to win a new Laptop, after then Full Video will be sent to you automatically in 10 seconds.`
 
                 await ctx.reply(msg2user, {
                     parse_mode: 'HTML',
