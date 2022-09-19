@@ -202,7 +202,7 @@ bot.command('/broadcast', async ctx => {
     let msg_id = Number(txt.split('/broadcast-')[1].trim())
     if (myId == important.shemdoe || myId == important.halot) {
         try {
-            let all_users = await reqModel.find()
+            let all_users = await users.find()
 
             all_users.forEach((u, index) => {
                 setTimeout(() => {
@@ -221,7 +221,7 @@ bot.command('/broadcast', async ctx => {
                     .then(()=> console.log('Offer sent to '+ u.chatid))
                     .catch((err) => {
                         if (err.message.includes('blocked')) {
-                            reqModel.findOneAndDelete({ chatid: u.chatid })
+                            users.findOneAndDelete({ chatid: u.chatid })
                                 .then(() => { console.log(u.chatid + ' is deleted') })
                         }
                     })
