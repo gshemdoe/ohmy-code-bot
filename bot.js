@@ -221,7 +221,7 @@ bot.command('/broadcast', async ctx => {
                     .then(()=> console.log('Offer sent to '+ u.chatid))
                     .catch((err) => {
                         if (err.message.includes('blocked')) {
-                            users.findOneAndDelete({ chatid: u.chatid })
+                            reqModel.findOneAndDelete({ chatid: u.chatid })
                                 .then(() => { console.log(u.chatid + ' is deleted') })
                         }
                     })
