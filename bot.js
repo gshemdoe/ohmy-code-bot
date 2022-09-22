@@ -174,7 +174,7 @@ bot.start(async ctx => {
 bot.command('offer', async ctx => {
     try {
         let txt = ctx.message.text
-        let durl = txt.split('/offer-')[1]
+        let durl = txt.split('/offer=')[1]
 
         await offer.updateOne({}, { url: durl, stats: 0 }, { upsert: true })
         ctx.reply('Offer posted successfully')
