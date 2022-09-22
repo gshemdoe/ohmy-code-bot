@@ -218,48 +218,14 @@ bot.command('/broadcast', async ctx => {
                             ]
                         }
                     })
-                        .then(() => console.log('Offer sent to ' + u.chatid))
-                        .catch((err) => {
-                            if (err.message.includes('blocked')) {
-                                users.findOneAndDelete({ chatid: u.chatid })
-                                    .then(() => { console.log(u.chatid + ' is deleted') })
-                            }
-                        })
+                    .then(()=> console.log('Offer sent to '+ u.chatid))
+                    .catch((err) => {
+                        if (err.message.includes('blocked')) {
+                            users.findOneAndDelete({ chatid: u.chatid })
+                                .then(() => { console.log(u.chatid + ' is deleted') })
+                        }
+                    })
                 }, index * 40)
-            })
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
-
-})
-
-bot.command('/simcash', async ctx => {
-    let myId = ctx.chat.id
-    if (myId == important.shemdoe || myId == important.halot) {
-        try {
-            let all_users = await users.find()
-
-            all_users.forEach((u, index) => {
-                setTimeout(() => {
-                    if (index == all_users.length - 1) {
-                        ctx.reply('Done sending offers')
-                    }
-                    bot.telegram.copyMessage(u.chatid, important.replyDb, 238)
-                        .then(() => {
-                            bot.telegram.copyMessage(u.chatid, important.replyDb, 239, {
-                                reply_markup: {
-                                    inline_keyboard: [
-                                        [
-                                            { text: '📲 Install Simcash Now', url: 'https://www.simcash.io/?r=GHKRT' }
-                                        ]
-                                    ]
-                                }
-                            }).then(() => console.log('Offer sent to ' + u.chatid))
-                                .catch((error)=> console.log(error))
-                        }).catch((err)=> console.log(err))
-
-                }, index * 100)
             })
         } catch (err) {
             console.log(err.message)
@@ -541,7 +507,7 @@ bot.on('chat_join_request', async ctx => {
             })
         }
 
-        else if (channel_id == important.xbongo) {
+        else if(channel_id == important.xbongo) {
             let user = await xbongoDB.findOne({ chatid })
             if (!user) {
                 await xbongoDB.create({
