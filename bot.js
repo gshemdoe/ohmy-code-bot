@@ -110,14 +110,11 @@ bot.start(async ctx => {
 
             }
 
-
-
-
             if (!nano.includes('fromWeb-')) {
                 let thvid = await db.findOne({ nano })
                 let thtitle = thvid.caption
                 let thmsid = thvid.msgId
-                let msg2user = `<b>${thtitle}</b> \n\nOpen our girls profile for naked sex chat, stays on the site for at least 10 seconds and full video will be sent to you automatically.`
+                let msg2user = `<b>${thtitle}</b> \n\nOpen our dating site below, stay on the site for at least 10 seconds after then full video will be sent to you automatically.`
 
                 await ctx.reply(msg2user, {
                     parse_mode: 'HTML',
