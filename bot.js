@@ -224,17 +224,6 @@ bot.on('channel_post', async ctx => {
             fileType: 'video',
             msgId
         })
-        await bot.telegram.copyMessage(important.xzone, important.ohmyDB, msgId, {
-            caption: `<b>${cap}\n\n📅 Aired On: <code>${tday}</code></b>`,
-            parse_mode: 'HTML',
-            disable_notification: true,
-            reply_markup: {
-                inline_keyboard: [[
-                    { text: `Browse Hot Girls`, url: `https://rebrand.ly/online-dating-find-your-match` },
-                    { text: `Join Sex Chat`, url: `https://rebrand.ly/sex-video-chat` },
-                ]]
-            }
-        })
         await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
     }
 })
