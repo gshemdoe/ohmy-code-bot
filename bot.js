@@ -200,8 +200,7 @@ bot.on('channel_post', async ctx => {
                 disable_notification: true,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: '⬇ GET FULL VIDEO (OPT. 1)', url: important.prod_domain + cdata }],
-                        [{ text: '⬇ GET FULL VIDEO (OPT. 2)', url: op2link }]
+                        [{ text: '⬇ DOWNLOAD FULL VIDEO', url: op2link }]
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
