@@ -67,14 +67,14 @@ bot.start(async ctx => {
             if (nano.includes('fromWeb-')) {
                 let webNano = nano.split('fromWeb-')[1]
                 let vid = await db.findOne({ nano: webNano })
-                    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
-                        reply_markup: {
-                            inline_keyboard: [[
-                                { text: 'Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
-                                { text: 'Browse Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
-                            ]]
-                        }
-                    })
+                await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+                    reply_markup: {
+                        inline_keyboard: [[
+                            { text: 'Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
+                            { text: 'Browse Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
+                        ]]
+                    }
+                })
             }
 
             if (!nano.includes('fromWeb-')) {
@@ -141,13 +141,13 @@ bot.command('/broadcast', async ctx => {
                             ]
                         }
                     })
-                    .then(()=> console.log('Offer sent to '+ u.chatid))
-                    .catch((err) => {
-                        if (err.message.includes('blocked')) {
-                            users.findOneAndDelete({ chatid: u.chatid })
-                                .then(() => { console.log(u.chatid + ' is deleted') })
-                        }
-                    })
+                        .then(() => console.log('Offer sent to ' + u.chatid))
+                        .catch((err) => {
+                            if (err.message.includes('blocked')) {
+                                users.findOneAndDelete({ chatid: u.chatid })
+                                    .then(() => { console.log(u.chatid + ' is deleted') })
+                            }
+                        })
                 }, index * 40)
             })
         } catch (err) {
@@ -420,7 +420,7 @@ bot.on('chat_join_request', async ctx => {
             })
         }
 
-        else if(channel_id == important.xbongo) {
+        else if (channel_id == important.xbongo) {
             let user = await xbongoDB.findOne({ chatid })
             if (!user) {
                 await xbongoDB.create({
@@ -453,6 +453,10 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 process.on('unhandledRejection', (reason, promise) => {
     bot.telegram.sendMessage(important.shemdoe, reason + ' It is an unhandled rejection.')
     console.log(reason)
+    if (reason.includes('Promise timed out after 90000')) {
+        bot.telegram.sendMessage(important.shemdoe, 'We exit hoping server will restart')
+        process.exit()
+    }
     //on production here process will change from crash to start cools
 })
 
