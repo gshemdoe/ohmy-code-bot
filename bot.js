@@ -226,6 +226,12 @@ bot.on('channel_post', async ctx => {
         })
         await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
     }
+
+    if(ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
+        let msg_id = ctx.channelPost.message_id
+        bot.telegram.copyMessage(important.pzone, important.pzone, msg_id)
+        bot.telegram.deleteMessage(important.pzone, msg_id)
+    }
 })
 
 bot.action('points', async ctx => {
