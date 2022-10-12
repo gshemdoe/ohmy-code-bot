@@ -459,11 +459,7 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 process.on('unhandledRejection', (reason, promise) => {
     bot.telegram.sendMessage(important.shemdoe, reason + ' It is an unhandled rejection.')
     console.log(reason)
-    if (reason.includes('Promise timed out after 90000')) {
-        bot.telegram.sendMessage(important.shemdoe, 'We exit hoping server will restart')
-        process.exit()
-    }
-    //on production here process will change from crash to start cools
+    process.exit()
 })
 
 //caught any exception
