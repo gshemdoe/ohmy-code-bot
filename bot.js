@@ -70,8 +70,7 @@ bot.start(async ctx => {
                 await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
                     reply_markup: {
                         inline_keyboard: [[
-                            { text: 'Sex Chatting', url: 'https://rebrand.ly/sex-video-chat' },
-                            { text: 'Browse Hot Girls', url: 'https://rebrand.ly/online-dating-find-your-match' },
+                            { text: 'Join Here For More...', url: 'https://t.me/+TCbCXgoThW0xOThk' }
                         ]]
                     }
                 })
