@@ -80,13 +80,24 @@ bot.start(async ctx => {
             if (!nano.includes('fromWeb-')) {
                 let thvid = await db.findOne({ nano })
                 let thtitle = thvid.caption
-                let thmsid = thvid.msgId
-                let msg2user = `<b>${thtitle}</b> \n\nOpen my nudes below, I'll send full porn video in 10 seconds.`
+                let msg2user = `<b>${thtitle}</b> \n\nOpen the full video link below.`
+
+                let posts = [
+                    '62c84d54da06342665e31fb7',
+                    '62ca86111afa2af6f7a1026c',
+                    '62cd8fbe9de0786aafdb98b7',
+                    '62df23671eef6dabf5feecde',
+                    '63212e1f6eeba4e82a45bd27',
+                    '632e5c7d2744c9849dd69c0a',
+                    '632e58662744c9849dd69ba1'
+                ]
+                let rrnp = Math.floor(Math.random() * posts.length)
+                let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${nano}`
 
                 await ctx.reply(msg2user, {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: [[{ text: '⬇ OPEN TO GET FULL VIDEO', url: `http://tele-offers.online/open-offer/complete/${nano}/${id}/${thmsid}` }]]
+                        inline_keyboard: [[{ text: '⬇ OPEN TO GET FULL VIDEO', url: op2link }]]
                     }
                 })
             }
