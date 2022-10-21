@@ -77,9 +77,12 @@ bot.start(async ctx => {
             }
 
             if (!nano.includes('fromWeb-')) {
+                let prep = 'Preparing full video... ⏳'
+                let prep_ing = await ctx.reply(prep)
                 let thvid = await db.findOne({ nano })
                 let thtitle = thvid.caption
-                let msg2user = `<b>${thtitle}</b> \n\nOpen the full video link below.`
+                let m_id = thvid.msgId
+                let msg2user = `<b>${thtitle}</b> \n\n✅ Video prepared successfully.`
 
                 let posts = [
                     '62c84d54da06342665e31fb7',
@@ -91,14 +94,21 @@ bot.start(async ctx => {
                     '632e58662744c9849dd69ba1'
                 ]
                 let rrnp = Math.floor(Math.random() * posts.length)
-                let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${nano}`
+                let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-NAN-uid=${ctx.chat.id}&-showid=${m_id}`
 
-                await ctx.reply(msg2user, {
-                    parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: [[{ text: '⬇ OPEN TO GET FULL VIDEO', url: op2link }]]
-                    }
-                })
+                setTimeout(()=> {
+                    bot.telegram.deleteMessage(ctx.chat.id, prep_ing.message_id)
+                    .then(()=> {
+                        ctx.reply(msg2user, {
+                            parse_mode: 'HTML',
+                            reply_markup: {
+                                inline_keyboard: [
+                                    [{text: '▶️ OPEN THE VIDEO', url: op2link}]
+                                ]
+                            }
+                        }).catch((err)=> console.log(err.message))
+                    }).catch((err)=> console.log(err.message))
+                }, 1500)
             }
         }
     } catch (err) {
