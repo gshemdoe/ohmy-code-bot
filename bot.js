@@ -212,6 +212,8 @@ bot.on('channel_post', async ctx => {
             let rrnp = Math.floor(Math.random() * posts.length)
             let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${cdata}`
 
+            let botlink = `http://t.me/ohmychannelV2bot?start=${cdata}`
+
             await gifsModel.create({
                 nano: cdata,
                 gifId: rpId
@@ -220,7 +222,8 @@ bot.on('channel_post', async ctx => {
                 disable_notification: true,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: '⬇ DOWNLOAD FULL VIDEO', url: op2link }]
+                        [{ text: '⬇ WATCH FULL VIDEO #L1', url: botlink }],
+                        [{ text: '⬇ WATCH FULL VIDEO #L2', url: op2link }],
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
