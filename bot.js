@@ -227,6 +227,16 @@ bot.on('channel_post', async ctx => {
                     ]
                 }
             }).catch(err => errMessage(err, ctx.chat.id))
+
+            await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId, {
+                disable_notification: true,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '⬇ WATCH FULL VIDEO #L1', url: botlink }],
+                        [{ text: '⬇ WATCH FULL VIDEO #L2', url: op2link }],
+                    ]
+                }
+            }).catch(err => errMessage(err, ctx.chat.id))
         }
     }
     if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
