@@ -48,6 +48,30 @@ function errMessage(err, id) {
     }
 }
 
+async function sendVideo(bot, ctx, id, nano) {
+    let mteja = await users.findOneAndUpdate({chatid: id}, {$inc: {points: -2}}, {new: true})
+    let msg = `You got the video and 2 points deducted from your points balance. \n\n<b>You remained with ${mteja.points} /points</b>`
+    let vid = await db.findOne({ nano })
+    await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+        reply_markup: {
+            inline_keyboard: [[
+                { text: 'Join Here For More...', url: 'https://t.me/+TCbCXgoThW0xOThk' }
+            ]]
+        }
+    })
+
+    setTimeout(()=> {
+        ctx.reply(msg, {parse_mode: 'HTML'})
+    }, 1500)
+}
+
+const pymntKey = [
+    [{text: "Pay with Litecoin (LTC)", callback_data: 'ltc'}],
+    [{text: "Pay with Doge coin (DOGE)", callback_data: 'doge'}],
+    [{text: "Pay with USDT (TRC20)", callback_data: 'usdt'}],
+    [{text: "I need help here 😒", callback_data: 'personal'}],
+]
+
 
 
 bot.start(async ctx => {
@@ -55,60 +79,32 @@ bot.start(async ctx => {
     let name = ctx.chat.first_name
 
     try {
-        let thisUser = await users.findOne({ chatid: id })
-        if (!thisUser) {
-            await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
-            console.log('New user Added')
-        }
-
         if (ctx.startPayload) {
             let nano = ctx.startPayload
 
             if (nano.includes('fromWeb-')) {
                 let webNano = nano.split('fromWeb-')[1]
-                let vid = await db.findOne({ nano: webNano })
-                await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
-                    reply_markup: {
-                        inline_keyboard: [[
-                            { text: 'Join Here For More...', url: 'https://t.me/+TCbCXgoThW0xOThk' }
-                        ]]
-                    }
-                })
+                nano = webNano
             }
 
-            if (!nano.includes('fromWeb-')) {
-                let prep = 'Preparing full video... ⏳'
-                let prep_ing = await ctx.reply(prep)
-                let thvid = await db.findOne({ nano })
-                let thtitle = thvid.caption
-                let m_id = thvid.msgId
-                let msg2user = `<b>${thtitle}</b> \n\n✅ Video prepared successfully.`
-
-                let posts = [
-                    '62c84d54da06342665e31fb7',
-                    '62ca86111afa2af6f7a1026c',
-                    '62cd8fbe9de0786aafdb98b7',
-                    '62df23671eef6dabf5feecde',
-                    '63212e1f6eeba4e82a45bd27',
-                    '632e5c7d2744c9849dd69c0a',
-                    '632e58662744c9849dd69ba1'
-                ]
-                let rrnp = Math.floor(Math.random() * posts.length)
-                let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-NAN-uid=${ctx.chat.id}&-showid=${m_id}`
-
-                setTimeout(()=> {
-                    bot.telegram.deleteMessage(ctx.chat.id, prep_ing.message_id)
-                    .then(()=> {
-                        ctx.reply(msg2user, {
-                            parse_mode: 'HTML',
-                            reply_markup: {
-                                inline_keyboard: [
-                                    [{text: '▶️ OPEN THE VIDEO', url: op2link}]
-                                ]
-                            }
-                        }).catch((err)=> console.log(err.message))
-                    }).catch((err)=> console.log(err.message))
-                }, 1500)
+            let thisUser = await users.findOne({ chatid: id })
+            if (!thisUser) {
+                await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
+                console.log('New user Added')
+                sendVideo(bot, ctx, id, nano)
+            }
+            if(thisUser) {
+                if(thisUser.points < 2) {
+                    ctx.reply(`You don't have enough points to get this video. You can get more points by donating a small amount to the server, see the donation amount below. \n\n<b>🎖 Get 90 points for $2.5 \n\n🎖 Get 200 points for $5.</b>`, {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: pymntKey
+                        }
+                    })
+                }
+                else {
+                    sendVideo(bot, ctx, id, nano)
+                }
             }
         }
     } catch (err) {
@@ -152,15 +148,7 @@ bot.command('/broadcast', async ctx => {
                     if (index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
-                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id, {
-                        reply_markup: {
-                            inline_keyboard: [
-                                [
-                                    { text: '📺 Watch Eva Elfie Naked Live ❤', url: 'https://bit.ly/oh-free-live-sex' }
-                                ]
-                            ]
-                        }
-                    })
+                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id)
                         .then(() => console.log('Offer sent to ' + u.chatid))
                         .catch((err) => {
                             if (err.message.includes('blocked')) {
@@ -192,6 +180,11 @@ bot.command('add', async ctx => {
     } catch (err) {
         errMessage(err, ctx.chat.id)
     }
+})
+
+bot.command('points', async ctx=> {
+    let user = await users.findOne({chatid: ctx.chat.id})
+    await ctx.reply(`Hey, ${ctx.chat.first_name}, you have ${user.points} point(s).`)
 })
 
 bot.on('channel_post', async ctx => {
@@ -260,7 +253,7 @@ bot.on('channel_post', async ctx => {
         await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
     }
 
-    if(ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
+    if (ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
         let msg_id = ctx.channelPost.message_id
         await bot.telegram.copyMessage(important.pzone, important.pzone, msg_id)
         await bot.telegram.deleteMessage(important.pzone, msg_id)
@@ -270,7 +263,7 @@ bot.on('channel_post', async ctx => {
 bot.action('points', async ctx => {
     try {
         let user = await users.findOne({ chatid: ctx.chat.id })
-        let text = `${ctx.chat.first_name} \n\nYour remaing points is: ${user.points} pts. \n\nClick  "➕ Add More" button to add your points.
+        let text = `${ctx.chat.first_name} \n\nYour remaing points is: ${user.points} pts.
 `
         ctx.answerCbQuery(text, {
             show_alert: true
