@@ -100,7 +100,7 @@ bot.start(async ctx => {
                         reply_markup: {
                             inline_keyboard: pymntKey
                         }
-                    })
+                    }).catch((err)=> console.log(err.message))
                 }
                 else {
                     sendVideo(bot, ctx, id, nano)
