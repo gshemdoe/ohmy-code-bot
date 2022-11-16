@@ -485,7 +485,6 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 process.on('unhandledRejection', (reason, promise) => {
     bot.telegram.sendMessage(important.shemdoe, reason + ' It is an unhandled rejection.')
     console.log(reason)
-    process.exit()
 })
 
 //caught any exception
