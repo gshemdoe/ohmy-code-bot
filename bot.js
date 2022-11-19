@@ -35,21 +35,22 @@ const important = {
 }
 
 function errMessage(err, id) {
-    if (err.message && err.description) {
+    if (!err.description) {
         console.log(err)
-        bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
-    }
-    else if (err.message && !err.description) {
+        if (!err.message.includes('bot was blocked')) {
+            bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
+        }
+
+    } else {
         console.log(err)
-        bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
-    } else if (!err.message && err.description) {
-        console.log(err)
-        bot.telegram.sendMessage(741815228, err.description + ' from ' + id)
+        if (!err.description.includes('bot was blocked')) {
+            bot.telegram.sendMessage(741815228, err.description + ' from ' + id)
+        }
     }
 }
 
 async function sendVideo(bot, ctx, id, nano) {
-    let mteja = await users.findOneAndUpdate({chatid: id}, {$inc: {points: -2}}, {new: true})
+    let mteja = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: -2 } }, { new: true })
     let msg = `You got the video and 2 points deducted from your points balance. \n\n<b>You remained with ${mteja.points} /points</b>`
     let vid = await db.findOne({ nano })
     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
@@ -60,16 +61,16 @@ async function sendVideo(bot, ctx, id, nano) {
         }
     })
 
-    setTimeout(()=> {
-        ctx.reply(msg, {parse_mode: 'HTML'})
+    setTimeout(() => {
+        ctx.reply(msg, { parse_mode: 'HTML' })
     }, 1500)
 }
 
 const pymntKey = [
-    [{text: "Pay with Litecoin (LTC)", callback_data: 'ltc'}],
-    [{text: "Pay with Doge coin (DOGE)", callback_data: 'doge'}],
-    [{text: "Pay with USDT (TRC20)", callback_data: 'usdt'}],
-    [{text: "I need help here 😒", callback_data: 'personal'}],
+    [{ text: "Pay with Litecoin (LTC)", callback_data: 'ltc' }],
+    [{ text: "Pay with Doge coin (DOGE)", callback_data: 'doge' }],
+    [{ text: "Pay with USDT (TRC20)", callback_data: 'usdt' }],
+    [{ text: "I need help here 😒", callback_data: 'personal' }],
 ]
 
 
@@ -93,14 +94,14 @@ bot.start(async ctx => {
                 console.log('New user Added')
                 sendVideo(bot, ctx, id, nano)
             }
-            if(thisUser) {
-                if(thisUser.points < 2) {
+            if (thisUser) {
+                if (thisUser.points < 2) {
                     ctx.reply(`You don't have enough points to get this video. You can get more points by donating a small amount to the server, see the donation amount below. \n\n<b>🎖 Get 90 points for $2.5 \n\n🎖 Get 200 points for $5.</b>`, {
                         parse_mode: 'HTML',
                         reply_markup: {
                             inline_keyboard: pymntKey
                         }
-                    }).catch((err)=> console.log(err.message))
+                    }).catch((err) => console.log(err.message))
                 }
                 else {
                     sendVideo(bot, ctx, id, nano)
@@ -182,8 +183,8 @@ bot.command('add', async ctx => {
     }
 })
 
-bot.command('points', async ctx=> {
-    let user = await users.findOne({chatid: ctx.chat.id})
+bot.command('points', async ctx => {
+    let user = await users.findOne({ chatid: ctx.chat.id })
     await ctx.reply(`Hey, ${ctx.chat.first_name}, you have ${user.points} point(s).`)
 })
 
