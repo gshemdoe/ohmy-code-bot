@@ -96,7 +96,7 @@ bot.start(async ctx => {
             }
             if (thisUser) {
                 if (thisUser.points < 2) {
-                    ctx.reply(`You don't have enough points to get this video. You can get more points by donating a small amount to the server, see the donation amount below. \n\n<b>🎖 Get 90 points for $2.5 \n\n🎖 Get 200 points for $5.</b>`, {
+                    await ctx.reply(`You don't have enough points to get this video. You can get more points by donating a small amount to the server, see the donation amount below. \n\n<b>🎖 Get 90 points for $2.5 \n\n🎖 Get 200 points for $5.</b>`, {
                         parse_mode: 'HTML',
                         reply_markup: {
                             inline_keyboard: pymntKey
@@ -104,7 +104,7 @@ bot.start(async ctx => {
                     }).catch((err) => console.log(err.message))
                 }
                 else {
-                    sendVideo(bot, ctx, id, nano)
+                    await sendVideo(bot, ctx, id, nano)
                 }
             }
         }
