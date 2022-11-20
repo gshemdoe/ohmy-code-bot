@@ -103,7 +103,7 @@ bot.start(async ctx => {
                         }
                     }).catch((err) => console.log(err.message))
                 }
-                else {
+                if(thisUser.points > 1) {
                     await sendVideo(bot, ctx, id, nano)
                 }
             }
