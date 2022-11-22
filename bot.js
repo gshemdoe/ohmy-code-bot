@@ -34,6 +34,9 @@ const important = {
     xbongo: -1001263624837
 }
 
+//delaying
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
 function errMessage(err, id) {
     if (!err.description) {
         console.log(err)
@@ -103,7 +106,7 @@ bot.start(async ctx => {
                         }
                     }).catch((err) => console.log(err.message))
                 }
-                if(thisUser.points > 1) {
+                if (thisUser.points > 1) {
                     await sendVideo(bot, ctx, id, nano)
                 }
             }
@@ -113,28 +116,22 @@ bot.start(async ctx => {
     }
 })
 
-
-bot.command('offer', async ctx => {
-    try {
-        let txt = ctx.message.text
-        let durl = txt.split('/offer=')[1]
-
-        await offer.updateOne({}, { url: durl, stats: 0 }, { upsert: true })
-        ctx.reply('Offer posted successfully')
-    } catch (err) {
-        errMessage(err, ctx.chat.id)
+bot.command('take', async ctx => {
+    if (ctx.chat.id == important.halot) {
+        try {
+            let poors = await users.find({ points: { $lt: 2 } })
+            for (let p of poors) {
+                let txt = `Admin just added 4 points to you, you have now ${p.points + 4} points.`
+                await p.updateOne({}, { $inc: { points: 4 } })
+                await bot.telegram.sendMessage(p.chatid, txt)
+                await delay(40)
+            }
+            await ctx.reply('loop end')
+        } catch (err) {
+            console.log(err.message)
+        }
     }
 })
-
-// bot.command('mama', async ctx=> {
-//     let zote = await db.find()
-
-//     zote.forEach((v, i)=> {
-//         setTimeout(()=> {
-//             bot.telegram.copyMessage(important.xzone, important.ohmyDB, v.msgId)
-//         }, 3500 * i)
-//     })
-// })
 
 bot.command('/broadcast', async ctx => {
     let myId = ctx.chat.id
