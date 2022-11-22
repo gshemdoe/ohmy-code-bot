@@ -122,7 +122,7 @@ bot.command('take', async ctx => {
             let poors = await users.find({ points: { $lt: 2 } })
             for (let p of poors) {
                 let txt = `Admin just added 4 points to you, you have now ${p.points + 4} points.`
-                await p.updateOne({}, { $inc: { points: 4 } })
+                await users.findOneAndUpdate({chatid: p.chatid}, {$inc: {points: 4}})
                 await bot.telegram.sendMessage(p.chatid, txt)
                 await delay(40)
             }
