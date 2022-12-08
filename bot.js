@@ -47,7 +47,7 @@ function errMessage(err, id) {
     } else {
         console.log(err)
         if (!err.description.includes('bot was blocked')) {
-            bot.telegram.sendMessage(741815228, err.description + ' from ' + id)
+            bot.telegram.sendMessage(741815228, err.description + ' - from ' + id)
         }
     }
 }
