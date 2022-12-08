@@ -10,6 +10,7 @@ const reqModel = require('./database/requestersDb')
 const xbongoDB = require('./database/xbongoReq')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
+.catch((err)=>console.log(err.message))
 
 mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts.ngo9k.mongodb.net/ohmyNew?retryWrites=true&w=majority`)
     .then(() => {
