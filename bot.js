@@ -487,12 +487,21 @@ bot.on('inline_query', async ctx => {
             {
                 type: 'article',
                 id: `${Math.random() * 999999}`,
-                title: 'Makato',
+                title: 'Deposit tax',
                 input_message_content: {
                     message_text: `Customer ID: ${id1x} \nAmount: ${amnt.toLocaleString('en-us')} TZS \nFee (5%): ${fee.toLocaleString('en-us')} TZS \nFinal deposited amount: ${final.toLocaleString('en-us')} TZS`
                 }
+            },
+            {
+                type: 'article',
+                id: `${Math.random() * 999999}`,
+                title: 'Withdraw tax',
+                input_message_content: {
+                    message_text: `Customer ID: ${id1x} \nAmount to withdraw: ${amnt.toLocaleString('en-us')} TZS \nFee (5%): ${fee.toLocaleString('en-us')} TZS \nReceived amount: ${final.toLocaleString('en-us')} TZS`
+                }
             }
         ]
+
         await ctx.answerInlineQuery(results)
 
     } catch (err) {
