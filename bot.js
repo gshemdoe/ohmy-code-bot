@@ -497,7 +497,7 @@ bot.on('inline_query', async ctx => {
                 id: `${Math.random() * 999999}`,
                 title: 'Withdraw tax',
                 input_message_content: {
-                    message_text: `Customer ID: ${id1x} \nAmount to withdraw: ${amnt.toLocaleString('en-us')} TZS \nFee (5%): ${fee.toLocaleString('en-us')} TZS \nReceived amount: ${final.toLocaleString('en-us')} TZS`
+                    message_text: `Customer ID: ${id1x} \nAmount to Withdraw: ${amnt.toLocaleString('en-us')} TZS \nWithholding Tax (5%): ${fee.toLocaleString('en-us')} TZS \nAfter-tax Amount: ${final.toLocaleString('en-us')} TZS`
                 }
             }
         ]
