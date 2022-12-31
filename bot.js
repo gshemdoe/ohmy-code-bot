@@ -43,12 +43,14 @@ function errMessage(err, id) {
         console.log(err)
         if (!err.message.includes('bot was blocked')) {
             bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
+            .catch((err)=> console.log(err.message))
         }
 
     } else {
         console.log(err)
         if (!err.description.includes('bot was blocked')) {
             bot.telegram.sendMessage(741815228, err.description + ' - from ' + id)
+            .catch((err)=> console.log(err.message))
         }
     }
 }
@@ -532,4 +534,5 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', (err) => {
     console.log(err)
     bot.telegram.sendMessage(741815228, err.message + ' - It is an uncaught exception.')
+    .catch((err)=> console.log(err.message))
 })
