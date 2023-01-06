@@ -58,6 +58,7 @@ function errMessage(err, id) {
 async function sendVideo(bot, ctx, id, nano) {
     let vid = await db.findOne({ nano })
     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
+        protect_content: true,
         reply_markup: {
             inline_keyboard: [[
                 { text: 'Join Here For More...', url: 'https://t.me/+TCbCXgoThW0xOThk' }
