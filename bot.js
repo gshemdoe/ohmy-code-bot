@@ -10,7 +10,7 @@ const reqModel = require('./database/requestersDb')
 const xbongoDB = require('./database/xbongoReq')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
-.catch((err)=>console.log(err.message))
+    .catch((err) => console.log(err.message))
 
 mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts.ngo9k.mongodb.net/ohmyNew?retryWrites=true&w=majority`)
     .then(() => {
@@ -43,14 +43,14 @@ function errMessage(err, id) {
         console.log(err)
         if (!err.message.includes('bot was blocked')) {
             bot.telegram.sendMessage(741815228, err.message + ' from ' + id)
-            .catch((err)=> console.log(err.message))
+                .catch((err) => console.log(err.message))
         }
 
     } else {
         console.log(err)
         if (!err.description.includes('bot was blocked')) {
             bot.telegram.sendMessage(741815228, err.description + ' - from ' + id)
-            .catch((err)=> console.log(err.message))
+                .catch((err) => console.log(err.message))
         }
     }
 }
@@ -98,21 +98,8 @@ bot.start(async ctx => {
             if (!thisUser) {
                 await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
                 console.log('New user Added')
-                sendVideo(bot, ctx, id, nano)
             }
-            if (thisUser) {
-                if (thisUser.points < 2) {
-                    await ctx.reply(`You don't have enough points to get this video. You can get more points by donating a small amount to the server, see the donation amount below. \n\n<b>🎖 Get 90 points for $2.5 \n\n🎖 Get 200 points for $5.</b>`, {
-                        parse_mode: 'HTML',
-                        reply_markup: {
-                            inline_keyboard: pymntKey
-                        }
-                    }).catch((err) => console.log(err.message))
-                }
-                if (thisUser.points > 1) {
-                    await sendVideo(bot, ctx, id, nano)
-                }
-            }
+            await sendVideo(bot, ctx, id, nano)
         }
     } catch (err) {
         errMessage(err, id)
@@ -122,10 +109,9 @@ bot.start(async ctx => {
 bot.command('take', async ctx => {
     if (ctx.chat.id == important.halot) {
         try {
-            let poors = await users.find({ points: { $lt: 2 } })
+            let poors = await users.find()
             for (let p of poors) {
-                let txt = `Admin just added 4 points to you, you have now ${p.points + 4} points.`
-                await p.updateOne({ $inc: { points: 4 } })
+                let txt = `Hey, I have great news for you. Now you don't need points to download full videos anymore. Enjoy all OH! MY Full videos for free 😍`
                 await bot.telegram.sendMessage(p.chatid, txt)
                 await delay(40)
             }
@@ -524,7 +510,7 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 process.on('unhandledRejection', (reason, promise) => {
-    bot.telegram.sendMessage(important.shemdoe, reason + ' --> It is an unhandled rejection.').catch(err=> {
+    bot.telegram.sendMessage(important.shemdoe, reason + ' --> It is an unhandled rejection.').catch(err => {
         console.log(err.message)
     })
     console.log(reason)
@@ -534,5 +520,5 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', (err) => {
     console.log(err)
     bot.telegram.sendMessage(741815228, err.message + ' - It is an uncaught exception.')
-    .catch((err)=> console.log(err.message))
+        .catch((err) => console.log(err.message))
 })
