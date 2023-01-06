@@ -56,8 +56,6 @@ function errMessage(err, id) {
 }
 
 async function sendVideo(bot, ctx, id, nano) {
-    let mteja = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: -2 } }, { new: true })
-    let msg = `You got the video and 2 points deducted from your points balance. \n\n<b>You remained with ${mteja.points} /points</b>`
     let vid = await db.findOne({ nano })
     await bot.telegram.copyMessage(id, -1001586042518, vid.msgId, {
         reply_markup: {
@@ -66,10 +64,6 @@ async function sendVideo(bot, ctx, id, nano) {
             ]]
         }
     })
-
-    setTimeout(() => {
-        ctx.reply(msg, { parse_mode: 'HTML' })
-    }, 1500)
 }
 
 const pymntKey = [
