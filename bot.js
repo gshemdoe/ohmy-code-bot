@@ -125,6 +125,13 @@ bot.start(async ctx => {
 })
 
 bot.command('/broadcast', async ctx => {
+    let url = 'https://redirecting5.eu/p/tveg/GFOt/46RX'
+    let rp_mkup = {
+        inline_keyboard: [
+            [{text: "♦ PLAY NOW", url}],
+            [{text: "🔞 More 18+ Games", url}]
+        ]
+    }
     let myId = ctx.chat.id
     let txt = ctx.message.text
     let msg_id = Number(txt.split('/broadcast-')[1].trim())
@@ -137,7 +144,9 @@ bot.command('/broadcast', async ctx => {
                     if (index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
-                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id)
+                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id, {
+                        reply_markup: rp_mkup
+                    })
                         .then(() => console.log('Offer sent to ' + u.chatid))
                         .catch((err) => {
                             if (err.message.includes('blocked')) {
