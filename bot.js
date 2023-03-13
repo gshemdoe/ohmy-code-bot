@@ -67,13 +67,6 @@ async function sendVideo(bot, ctx, id, nano) {
     })
 }
 
-const pymntKey = [
-    [{ text: "Pay with Litecoin (LTC)", callback_data: 'ltc' }],
-    [{ text: "Pay with Doge coin (DOGE)", callback_data: 'doge' }],
-    [{ text: "Pay with USDT (TRC20)", callback_data: 'usdt' }],
-    [{ text: "I need help here 😒", callback_data: 'personal' }],
-]
-
 
 
 bot.start(async ctx => {
@@ -91,29 +84,43 @@ bot.start(async ctx => {
 
             let thisUser = await users.findOne({ chatid: id })
             if (!thisUser) {
-                await users.create({ chatid: id, name, unano: `user${id}`, points: 10 })
+                await users.create({ chatid: id, name, unano: `user${id}`, points: 2 })
                 console.log('New user Added')
+                await sendVideo(bot, ctx, id, nano)
+                await delay(1000)
+                let inf = await ctx.reply(`You got the video. You remained with 2 free videos. \n\nWhen free videos depleted you'll have to open our offer page for 5 seconds to get a video.`)
+                setTimeout(() => {
+                    ctx.deleteMessage(inf.message_id)
+                        .catch((e) => console.log(e.message))
+                }, 5000)
+            } else {
+                if (thisUser.points > 0) {
+                    await sendVideo(bot, ctx, id, nano)
+                    let updt = await users.findOneAndUpdate({chatid: id}, {$inc: {points: -1}}, {new: true})
+                    await delay(1000)
+                    let inf = await ctx.reply(`You got the video. You remained with ${updt.points} free videos. When free videos depleted you'll have to open our offer page for 5 seconds to get a video.`)
+                    setTimeout(() => {
+                        ctx.deleteMessage(inf.message_id)
+                            .catch((e) => console.log(e.message))
+                    }, 5000)
+                } else {
+                    let our_vid = await db.findOne({nano})
+                    let url = `http://get-ohmy-full-video.font5.net/ohmy/${id}/${nano}`
+                    await ctx.reply(`You're about to download <b>${our_vid.caption}</b>\n\n<i>open the site below for at least 5 seconds to get this video</i>`, {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    {text: "⬇️ GET the VIDEO", url}
+                                ]
+                            ]
+                        }
+                    })
+                }
             }
-            await sendVideo(bot, ctx, id, nano)
         }
     } catch (err) {
         errMessage(err, id)
-    }
-})
-
-bot.command('take', async ctx => {
-    if (ctx.chat.id == important.halot) {
-        try {
-            let poors = await users.find()
-            for (let p of poors) {
-                let txt = `Hey, I have great news for you. Now you don't need points to download full videos anymore. Enjoy all OH! MY Full videos for free 😍`
-                await bot.telegram.sendMessage(p.chatid, txt)
-                await delay(40)
-            }
-            await ctx.reply('loop end')
-        } catch (err) {
-            console.log(err.message)
-        }
     }
 })
 
@@ -247,112 +254,6 @@ bot.on('channel_post', async ctx => {
     }
 })
 
-bot.action('points', async ctx => {
-    try {
-        let user = await users.findOne({ chatid: ctx.chat.id })
-        let text = `${ctx.chat.first_name} \n\nYour remaing points is: ${user.points} pts.
-`
-        ctx.answerCbQuery(text, {
-            show_alert: true
-        })
-    } catch (err) {
-        errMessage(err, ctx.chat.id)
-    }
-})
-
-bot.action('add_more', async ctx => {
-    try {
-        let chatid = ctx.chat.id
-        let name = ctx.chat.first_name
-        let id_to_delete = ctx.callbackQuery.message.message_id
-
-        await ctx.reply(`Hello ${name}, buy more points from below packages.`, {
-            parse_mode: 'HTML',
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: '» Get 100 points for $1.0', callback_data: 'inst' }],
-                    [{ text: '» Get 200 points for $1.5', callback_data: 'inst' }],
-                    [{ text: '» Get 400 points for $2.5', callback_data: 'inst' }],
-                    [{ text: '» Get 1000 points for $5.0', callback_data: 'inst' }]
-                ]
-            }
-        })
-        await bot.telegram.deleteMessage(chatid, id_to_delete)
-    } catch (err) {
-        errMessage(err, ctx.chat.id)
-    }
-
-})
-
-bot.action('usdt', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2618)
-        .catch(err => errMessage(err, ctx.chat.id))
-})
-
-bot.action('ltc', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2619)
-        .catch(err => errMessage(err, ctx.chat.id))
-})
-
-bot.action('busd', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2620)
-        .catch(err => errMessage(err, ctx.chat.id))
-})
-
-bot.action('doge', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2621)
-        .catch(err => errMessage(err, ctx.chat.id))
-})
-
-bot.action('personal', async ctx => {
-    await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2622)
-        .catch(err => errMessage(err, ctx.chat.id))
-})
-
-bot.action('inst', async ctx => {
-    let chatid = ctx.chat.id
-    let msg_to_delete = ctx.callbackQuery.message.message_id
-    try {
-        await bot.telegram.copyMessage(ctx.chat.id, -1001586042518, 2609, {
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        { text: '› USDT', callback_data: 'usdt' },
-                        { text: '› BUSD', callback_data: 'busd' },
-                    ],
-                    [
-                        { text: '› LTC', callback_data: 'ltc' },
-                        { text: '› DOGE', callback_data: 'doge' },
-                    ],
-                    [
-                        { text: `I need a personal help 😢`, callback_data: 'personal' }
-                    ]
-                ]
-            }
-        })
-        await bot.telegram.deleteMessage(chatid, msg_to_delete)
-    } catch (err) {
-        errMessage(err, ctx.chat.id)
-    }
-})
-
-bot.on('callback_query', async ctx => {
-    try {
-        let cdata = ctx.callbackQuery.data
-        let callId = ctx.callbackQuery.id
-        if (cdata.includes('getFull-')) {
-            let nano = cdata.split('getFull-')[1]
-
-            ctx.answerCbQuery('', {
-                url: important.prod_domain + nano,
-                cache_time: 600
-            })
-        }
-    } catch (err) {
-        errMessage(err, ctx.chat.id)
-    }
-})
-
 bot.on('chat_join_request', async ctx => {
     let chatid = ctx.chatJoinRequest.from.id
     let channel_id = ctx.chatJoinRequest.chat.id
@@ -387,41 +288,6 @@ bot.on('chat_join_request', async ctx => {
         }
     } catch (err) {
         errMessage(err, chatid)
-    }
-})
-
-bot.on('inline_query', async ctx => {
-    try {
-        let qry = ctx.inlineQuery
-
-        let amnt = Number(qry.query.split('-')[0])
-        let final = amnt * 0.95
-        let fee = amnt - final
-        let id1x = qry.query.split('-')[1]
-
-        let results = [
-            {
-                type: 'article',
-                id: `${Math.random() * 999999}`,
-                title: 'Deposit tax',
-                input_message_content: {
-                    message_text: `Customer ID: ${id1x} \nAmount: ${amnt.toLocaleString('en-us')} TZS \nFee (5%): ${fee.toLocaleString('en-us')} TZS \nFinal deposited amount: ${final.toLocaleString('en-us')} TZS`
-                }
-            },
-            {
-                type: 'article',
-                id: `${Math.random() * 999999}`,
-                title: 'Withdraw tax',
-                input_message_content: {
-                    message_text: `Customer ID: ${id1x} \nAmount to Withdraw: ${amnt.toLocaleString('en-us')} TZS \nWithholding Tax (5%): ${fee.toLocaleString('en-us')} TZS \nAfter-tax Amount: ${final.toLocaleString('en-us')} TZS \n\n\nNote: Withdraw request can take up to 3 hours to be completed.`
-                }
-            }
-        ]
-
-        await ctx.answerInlineQuery(results)
-
-    } catch (err) {
-        console.log(err.message)
     }
 })
 
