@@ -8,6 +8,7 @@ const offer = require('./database/offers')
 const gifsModel = require('./database/gif')
 const reqModel = require('./database/requestersDb')
 const xbongoDB = require('./database/xbongoReq')
+const oh_counts = require('./database/redirects-counter')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
     .catch((err) => console.log(err.message))
@@ -167,9 +168,9 @@ bot.command('stats', async ctx=> {
     try {
         let watu = await users.countDocuments()
         let vids = await db.countDocuments()
+        let redirects = await oh_counts.findOne({id: 'shemdoe'})
 
-        await ctx.reply(`Total Users: ${watu.toLocaleString('en-us')}`)
-        await ctx.reply(`Total Videos: ${vids.toLocaleString('en-us')}`)
+        await ctx.reply(`Total Users: ${watu.toLocaleString('en-us')} \n\nTotal Videos: ${vids.toLocaleString('en-us')} \n\nTotal Redirects: ${redirects.count.toLocaleString('en-us')}`)
     } catch (err) {
         await ctx.reply(err.message)
         .catch(e=> console.log(e.message))
