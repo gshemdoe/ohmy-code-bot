@@ -163,7 +163,18 @@ bot.command('/broadcast', async ctx => {
 
 })
 
+bot.command('stats', async ctx=> {
+    try {
+        let watu = await users.countDocuments()
+        let vids = await db.countDocuments()
 
+        await ctx.reply(`Total Users: ${watu.toLocaleString('en-us')}`)
+        await ctx.reply(`Total Videos: ${vids.toLocaleString('en-us')}`)
+    } catch (err) {
+        await ctx.reply(err.message)
+        .catch(e=> console.log(e.message))
+    }
+})
 
 bot.command('add', async ctx => {
     let txt = ctx.message.text
