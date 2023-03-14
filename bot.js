@@ -9,6 +9,7 @@ const gifsModel = require('./database/gif')
 const reqModel = require('./database/requestersDb')
 const xbongoDB = require('./database/xbongoReq')
 const oh_counts = require('./database/redirects-counter')
+const oh_channels = require('./database/oh-channels')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
     .catch((err) => console.log(err.message))
@@ -97,7 +98,7 @@ bot.start(async ctx => {
             } else {
                 if (thisUser.points > 0) {
                     await sendVideo(bot, ctx, id, nano)
-                    let updt = await users.findOneAndUpdate({chatid: id}, {$inc: {points: -1}}, {new: true})
+                    let updt = await users.findOneAndUpdate({ chatid: id }, { $inc: { points: -1 } }, { new: true })
                     await delay(1000)
                     let inf = await ctx.reply(`You got the video. You remained with ${updt.points} free videos. When free videos depleted you'll have to open our offer page for 5 seconds to get a video.`)
                     setTimeout(() => {
@@ -105,14 +106,14 @@ bot.start(async ctx => {
                             .catch((e) => console.log(e.message))
                     }, 5000)
                 } else {
-                    let our_vid = await db.findOne({nano})
+                    let our_vid = await db.findOne({ nano })
                     let url = `http://get-ohmy-full-video.font5.net/ohmy/${id}/${nano}`
                     await ctx.reply(`You're about to download <b>${our_vid.caption}</b>\n\n<i>open the site below for at least 5 seconds to get this video</i>`, {
                         parse_mode: 'HTML',
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "⬇️ GET the VIDEO", url}
+                                    { text: "⬇️ GET the VIDEO", url }
                                 ]
                             ]
                         }
@@ -129,8 +130,8 @@ bot.command('/broadcast', async ctx => {
     let url = 'https://redirecting5.eu/p/tveg/GFOt/46RX'
     let rp_mkup = {
         inline_keyboard: [
-            [{text: "♦ PLAY NOW", url}],
-            [{text: "🔞 More 18+ Games", url}]
+            [{ text: "♦ PLAY NOW", url }],
+            [{ text: "🔞 More 18+ Games", url }]
         ]
     }
     let myId = ctx.chat.id
@@ -164,16 +165,16 @@ bot.command('/broadcast', async ctx => {
 
 })
 
-bot.command('stats', async ctx=> {
+bot.command('stats', async ctx => {
     try {
         let watu = await users.countDocuments()
         let vids = await db.countDocuments()
-        let redirects = await oh_counts.findOne({id: 'shemdoe'})
+        let redirects = await oh_counts.findOne({ id: 'shemdoe' })
 
         await ctx.reply(`Total Users: ${watu.toLocaleString('en-us')} \n\nTotal Videos: ${vids.toLocaleString('en-us')} \n\nTotal Redirects: ${redirects.count.toLocaleString('en-us')}`)
     } catch (err) {
         await ctx.reply(err.message)
-        .catch(e=> console.log(e.message))
+            .catch(e => console.log(e.message))
     }
 })
 
@@ -203,110 +204,133 @@ bot.command('points', async ctx => {
 })
 
 bot.on('channel_post', async ctx => {
-    if (ctx.channelPost.chat.id == important.replyDb) {
-        if (ctx.channelPost.reply_to_message) {
-            let rpId = ctx.channelPost.reply_to_message.message_id
-            let cdata = ctx.channelPost.text
+    try {
+        if (ctx.channelPost.chat.id == important.replyDb) {
+            if (ctx.channelPost.reply_to_message) {
+                let rpId = ctx.channelPost.reply_to_message.message_id
+                let cdata = ctx.channelPost.text
 
-            let posts = [
-                '62c84d54da06342665e31fb7',
-                '62ca86111afa2af6f7a1026c',
-                '62cd8fbe9de0786aafdb98b7',
-                '62df23671eef6dabf5feecde',
-                '63212e1f6eeba4e82a45bd27',
-                '632e5c7d2744c9849dd69c0a',
-                '632e58662744c9849dd69ba1'
-            ]
-            let rrnp = Math.floor(Math.random() * posts.length)
-            let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${cdata}`
+                let posts = [
+                    '62c84d54da06342665e31fb7',
+                    '62ca86111afa2af6f7a1026c',
+                    '62cd8fbe9de0786aafdb98b7',
+                    '62df23671eef6dabf5feecde',
+                    '63212e1f6eeba4e82a45bd27',
+                    '632e5c7d2744c9849dd69c0a',
+                    '632e58662744c9849dd69ba1'
+                ]
+                let rrnp = Math.floor(Math.random() * posts.length)
+                let op2link = `https://font5.net/blog/post.html?id=${posts[rrnp]}#getting-full-show-showid=${cdata}`
 
-            let botlink = `http://t.me/ohmychannelV2bot?start=${cdata}`
+                let botlink = `http://t.me/ohmychannelV2bot?start=${cdata}`
 
-            await gifsModel.create({
-                nano: cdata,
-                gifId: rpId
-            })
-            await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
-                disable_notification: true,
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                        [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                    ]
-                }
-            }).catch(err => errMessage(err, ctx.chat.id))
+                await gifsModel.create({
+                    nano: cdata,
+                    gifId: rpId
+                })
+                await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
+                    disable_notification: true,
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
+                        ]
+                    }
+                }).catch(err => errMessage(err, ctx.chat.id))
 
-            await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId, {
-                disable_notification: true,
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                        [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                    ]
-                }
-            }).catch(err => errMessage(err, ctx.chat.id))
+                await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId, {
+                    disable_notification: true,
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
+                        ]
+                    }
+                }).catch(err => errMessage(err, ctx.chat.id))
+            }
         }
-    }
-    if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
-        let fid = ctx.channelPost.video.file_unique_id
-        let file_id = ctx.channelPost.video.file_id
-        let cap = ctx.channelPost.caption
-        let cap_ent = ctx.channelPost.caption_entities
-        let caption = cap.split(' - With')[0].trim()
-        let msgId = ctx.channelPost.message_id
-        let tday = new Date().toDateString()
+        if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
+            let fid = ctx.channelPost.video.file_unique_id
+            let file_id = ctx.channelPost.video.file_id
+            let cap = ctx.channelPost.caption
+            let cap_ent = ctx.channelPost.caption_entities
+            let caption = cap.split(' - With')[0].trim()
+            let msgId = ctx.channelPost.message_id
+            let tday = new Date().toDateString()
 
-        await db.create({
-            caption_entities: cap_ent,
-            uniqueId: fid,
-            fileId: file_id,
-            caption,
-            nano: fid + msgId,
-            fileType: 'video',
-            msgId
-        })
-        await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
-    }
+            await db.create({
+                caption_entities: cap_ent,
+                uniqueId: fid,
+                fileId: file_id,
+                caption,
+                nano: fid + msgId,
+                fileType: 'video',
+                msgId
+            })
+            await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
+        }
 
-    if (ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
-        let msg_id = ctx.channelPost.message_id
-        await bot.telegram.copyMessage(important.pzone, important.pzone, msg_id)
-        await bot.telegram.deleteMessage(important.pzone, msg_id)
+        if (ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
+            let msg_id = ctx.channelPost.message_id
+            await bot.telegram.copyMessage(important.pzone, important.pzone, msg_id)
+            await bot.telegram.deleteMessage(important.pzone, msg_id)
+        }
+
+        let impChannels = [important.pzone, important.ohmyDB, important.replyDb]
+        let url = 'https://t.me/+s9therYKwshlNDA8'
+        let txt = ctx.channelPost.text
+        let txtid = ctx.channelPost.message_id
+        let chan_id = ctx.channelPost.chat.id
+        let title = ctx.channelPost.chat.title
+        let chan_owner
+        let rp_mkup = {
+            inline_keyboard: [
+                [{ text: '🔞 FREE XXX VIDEOS 💋', url }],
+                [{ text: '🔥 FULL BRAZZERS VIDEOS ❤', url }],
+                [{ text: '❌ XVIDEOS & PORNHUB CLIPS 💋', url }],
+                [{ text: '❤ JOIN ESCORTS & DATING GROUP', url }],
+                [{ text: '🍆🍆BIG DICKS && TIGHT PUSSIES🍑🍑', url }],
+            ]
+        }
+
+        if (txt.toLowerCase() == 'add me' && !impChannels.includes(chan_id)) {
+            let chat = await ctx.getChatAdministrators()
+            for (let c of chat) {
+                if (c.status == 'creator') {
+                    chan_owner = c.user.first_name
+                }
+            }
+
+            let the_ch = await oh_channels.findOne({ chan_id })
+            if (!the_ch) {
+                await oh_channels.create({ chan_id, title, owner: chan_owner })
+                let m1 = await ctx.reply('Channel added to DB')
+                await delay(1000)
+                await ctx.deleteMessage(txtid)
+                await ctx.deleteMessage(m1.message_id)
+                await bot.telegram.copyMessage(chan_id, important.pzone, 7704, {
+                    reply_markup: rp_mkup
+                })
+            } else {await ctx.reply('Channel already added')}
+        }
+    } catch (err) {
+        console.log(err.message)
     }
 })
 
 bot.on('chat_join_request', async ctx => {
     let chatid = ctx.chatJoinRequest.from.id
     let channel_id = ctx.chatJoinRequest.chat.id
+    let cha_title = ctx.chatJoinRequest.chat.title
+    let name = ctx.chatJoinRequest.from.first_name
 
     try {
-        if (channel_id == important.xzone) {
-            let user = await reqModel.findOne({ chatid })
-            if (!user) {
-                await reqModel.create({
-                    chatid
-                })
-                console.log('New requster added to database')
-            }
-            await bot.telegram.approveChatJoinRequest(important.xzone, chatid)
-            await bot.telegram.sendMessage(chatid, 'Congratulations! 🎉 Your request to join XZONE is approved', {
-                reply_markup: { inline_keyboard: [[{ text: 'Enter XZONE', url: 'https://t.me/+OsCEEmeM--diNzU0' }]] }
-            })
+        let user = await users.findOne({ chatid })
+        if (!user) {
+            await users.create({ points: 3, name, chatid, unano: `user${chatid}` })
         }
-
-        else if (channel_id == important.xbongo) {
-            let user = await xbongoDB.findOne({ chatid })
-            if (!user) {
-                await xbongoDB.create({
-                    chatid
-                })
-                console.log('New bongo requster added to database')
-            }
-            await bot.telegram.approveChatJoinRequest(important.xbongo, chatid)
-            await bot.telegram.sendMessage(chatid, 'Hongera, ombi lako la kujiunga na channel ya Raha Tupu ❤ limekubaliwa', {
-                reply_markup: { inline_keyboard: [[{ text: 'Ingia Raha Tupu ❤', url: 'https://t.me/+DozKYTakahllNmVk' }]] }
-            })
-        }
+        await bot.telegram.approveChatJoinRequest(channel_id, chatid)
+        await bot.telegram.sendMessage(chatid, `Congratulations! 🎉 Your request to join <b>${cha_title}</b> is approved.`)
     } catch (err) {
         errMessage(err, chatid)
     }
