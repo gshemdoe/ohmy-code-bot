@@ -130,6 +130,17 @@ bot.start(async ctx => {
     }
 })
 
+bot.command('p', async ctx => {
+    try {
+        let com = ctx.message.text
+        let txt = com.split('=')[1]
+        let url320 = txt.replace(/2160p/g, '320p')
+        await ctx.sendVideo(url320)
+    } catch (err) {
+        await ctx.reply(err.message)
+    }
+})
+
 //reactions buttons
 call_reactions_function(bot, imp)
 
@@ -262,7 +273,7 @@ bot.on('channel_post', async ctx => {
                 //post to rt
                 let rt_gif = await bot.telegram.copyMessage(imp.rtgrp, imp.replyDb, rpId)
                 await bot.telegram.editMessageCaption(imp.rtgrp, rt_gif.message_id, '', 'Full video 👇👇')
-                let vid = await db.findOne({ nano: cdata})
+                let vid = await db.findOne({ nano: cdata })
                 await delay(500)
                 await bot.telegram.copyMessage(imp.rtgrp, imp.ohmyDB, vid.msgId, {
                     reply_markup: {
