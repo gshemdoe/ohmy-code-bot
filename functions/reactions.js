@@ -60,7 +60,7 @@ module.exports = (bot, imp) => {
 
 
                 let data = ctx.callbackQuery.message.reply_markup
-                let emoji = data.inline_keyboard[0][0].text
+                let emoji = data.inline_keyboard[0][1].text
                 let number = Number(emoji.split('+')[1])
                 let count = number + 1
                 let prev_em = emoji.split("+")[0]
@@ -106,7 +106,7 @@ module.exports = (bot, imp) => {
 
 
                 let data = ctx.callbackQuery.message.reply_markup
-                let emoji = data.inline_keyboard[0][0].text
+                let emoji = data.inline_keyboard[0][2].text
                 let number = Number(emoji.split('+')[1])
                 let count = number + 1
                 let prev_em = emoji.split("+")[0]
