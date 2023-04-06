@@ -11,6 +11,9 @@ const xbongoDB = require('./database/xbongoReq')
 const oh_counts = require('./database/redirects-counter')
 const oh_channels = require('./database/oh-channels')
 
+//fns
+const call_reactions_function = require('./functions/reactions')
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
     .catch((err) => console.log(err.message))
 
@@ -24,7 +27,7 @@ mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-const important = {
+const imp = {
     replyDb: -1001608248942,
     pzone: -1001352114412,
     prem_channel: -1001470139866,
@@ -34,7 +37,8 @@ const important = {
     halot: 1473393723,
     xzone: -1001740624527,
     ohmyDB: -1001586042518,
-    xbongo: -1001263624837
+    xbongo: -1001263624837,
+    rtgrp: -1001899312985
 }
 
 //delaying
@@ -126,6 +130,9 @@ bot.start(async ctx => {
     }
 })
 
+//reactions buttons
+call_reactions_function(bot, imp)
+
 bot.command('/broadcast', async ctx => {
     let url = 'https://redirecting5.eu/p/tveg/GFOt/46RX'
     let rp_mkup = {
@@ -137,7 +144,7 @@ bot.command('/broadcast', async ctx => {
     let myId = ctx.chat.id
     let txt = ctx.message.text
     let msg_id = Number(txt.split('/broadcast-')[1].trim())
-    if (myId == important.shemdoe || myId == important.halot) {
+    if (myId == imp.shemdoe || myId == imp.halot) {
         try {
             let all_users = await users.find()
 
@@ -146,7 +153,7 @@ bot.command('/broadcast', async ctx => {
                     if (index == all_users.length - 1) {
                         ctx.reply('Done sending offers')
                     }
-                    bot.telegram.copyMessage(u.chatid, important.replyDb, msg_id, {
+                    bot.telegram.copyMessage(u.chatid, imp.replyDb, msg_id, {
                         reply_markup: rp_mkup
                     })
                         .then(() => console.log('Offer sent to ' + u.chatid))
@@ -205,7 +212,7 @@ bot.command('points', async ctx => {
 
 bot.on('channel_post', async ctx => {
     try {
-        if (ctx.channelPost.chat.id == important.replyDb) {
+        if (ctx.channelPost.chat.id == imp.replyDb) {
             if (ctx.channelPost.reply_to_message) {
                 let rpId = ctx.channelPost.reply_to_message.message_id
                 let cdata = ctx.channelPost.text
@@ -228,7 +235,9 @@ bot.on('channel_post', async ctx => {
                     nano: cdata,
                     gifId: rpId
                 })
-                await bot.telegram.copyMessage(important.prem_channel, important.replyDb, rpId, {
+
+                //post to premium channel
+                await bot.telegram.copyMessage(imp.prem_channel, imp.replyDb, rpId, {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
@@ -238,7 +247,9 @@ bot.on('channel_post', async ctx => {
                     }
                 }).catch(err => errMessage(err, ctx.chat.id))
 
-                await bot.telegram.copyMessage(important.xzone, important.replyDb, rpId, {
+
+                //post to xzone
+                await bot.telegram.copyMessage(imp.xzone, imp.replyDb, rpId, {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
@@ -246,10 +257,27 @@ bot.on('channel_post', async ctx => {
                             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
                         ]
                     }
-                }).catch(err => errMessage(err, ctx.chat.id))
+                })
+
+                //post to rt
+                let rt_gif = await bot.telegram.copyMessage(imp.rtgrp, imp.replyDb, rpId)
+                await bot.telegram.editMessageCaption(imp.rtgrp, rt_gif.message_id, '', 'Full video 👇👇')
+                let vid = await db.findOne({ nano: cdata})
+                await delay(500)
+                await bot.telegram.copyMessage(imp.rtgrp, imp.ohmyDB, vid.msgId, {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                { text: '🔥+1', callback_data: 'em1' },
+                                { text: '❤+1', callback_data: 'em2' },
+                                { text: '👍+1', callback_data: 'em3' },
+                            ]
+                        ]
+                    }
+                })
             }
         }
-        if (ctx.channelPost.chat.id == important.ohmyDB && ctx.channelPost.video) {
+        if (ctx.channelPost.chat.id == imp.ohmyDB && ctx.channelPost.video) {
             let fid = ctx.channelPost.video.file_unique_id
             let file_id = ctx.channelPost.video.file_id
             let cap = ctx.channelPost.caption
@@ -270,13 +298,13 @@ bot.on('channel_post', async ctx => {
             await ctx.reply(`<code>${fid + msgId}</code>`, { parse_mode: 'HTML' })
         }
 
-        if (ctx.channelPost.chat.id == important.pzone && ctx.channelPost.forward_date) {
+        if (ctx.channelPost.chat.id == imp.pzone && ctx.channelPost.forward_date) {
             let msg_id = ctx.channelPost.message_id
-            await bot.telegram.copyMessage(important.pzone, important.pzone, msg_id)
-            await bot.telegram.deleteMessage(important.pzone, msg_id)
+            await bot.telegram.copyMessage(imp.pzone, imp.pzone, msg_id)
+            await bot.telegram.deleteMessage(imp.pzone, msg_id)
         }
 
-        let impChannels = [important.pzone, important.ohmyDB, important.replyDb]
+        let impChannels = [imp.pzone, imp.ohmyDB, imp.replyDb]
         let url = 'https://t.me/+s9therYKwshlNDA8'
         let txt = ctx.channelPost.text
         let txtid = ctx.channelPost.message_id
@@ -308,10 +336,10 @@ bot.on('channel_post', async ctx => {
                 await delay(1000)
                 await ctx.deleteMessage(txtid)
                 await ctx.deleteMessage(m1.message_id)
-                await bot.telegram.copyMessage(chan_id, important.pzone, 7704, {
+                await bot.telegram.copyMessage(chan_id, imp.pzone, 7704, {
                     reply_markup: rp_mkup
                 })
-            } else {await ctx.reply('Channel already added')}
+            } else { await ctx.reply('Channel already added') }
         }
     } catch (err) {
         console.log(err.message)
@@ -341,7 +369,7 @@ bot.launch()
     .then((console.log('Bot is running')))
     .catch((err) => {
         console.log('Bot is not running')
-        bot.telegram.sendMessage(important.shemdoe, err.message)
+        bot.telegram.sendMessage(imp.shemdoe, err.message)
     })
 
 
@@ -349,7 +377,7 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 process.on('unhandledRejection', (reason, promise) => {
-    bot.telegram.sendMessage(important.shemdoe, reason + ' --> It is an unhandled rejection.').catch(err => {
+    bot.telegram.sendMessage(imp.shemdoe, reason + ' --> It is an unhandled rejection.').catch(err => {
         console.log(err.message)
     })
     console.log(reason)
