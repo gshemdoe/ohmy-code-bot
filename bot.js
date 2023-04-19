@@ -264,13 +264,24 @@ bot.on('channel_post', async ctx => {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
+                            [{ text: '⬇ DOWNLOAD VIDEO NZIMA', url: botlink }],
                             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
                         ]
                     }
                 })
 
-                //post to rt
+                //post to XBONGO
+                let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
+                await bot.telegram.copyMessage(imp.xbongo, imp.replyDb, rpId, {
+                    disable_notification: true,
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '⬇ DOWNLOAD VIDEO NZIMA', url: rtbot }]
+                        ]
+                    }
+                })
+
+                //post to rt - obsolete
                 let rt_gif = await bot.telegram.copyMessage(imp.rtgrp, imp.replyDb, rpId)
                 await bot.telegram.editMessageCaption(imp.rtgrp, rt_gif.message_id, '', '#Trailer \n   Full video 👇👇')
                 let vid = await db.findOne({ nano: cdata })
