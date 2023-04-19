@@ -364,12 +364,16 @@ bot.on('chat_join_request', async ctx => {
     let name = ctx.chatJoinRequest.from.first_name
 
     try {
-        let user = await users.findOne({ chatid })
-        if (!user) {
-            await users.create({ points: 3, name, chatid, unano: `user${chatid}` })
+        //dont process rahatupu
+        if (channel_id != imp.xbongo) {
+            let user = await users.findOne({ chatid })
+            if (!user) {
+                await users.create({ points: 3, name, chatid, unano: `user${chatid}` })
+            }
+            await bot.telegram.approveChatJoinRequest(channel_id, chatid)
+            await bot.telegram.sendMessage(chatid, `Congratulations! 🎉 Your request to join <b>${cha_title}</b> is approved.`)
         }
-        await bot.telegram.approveChatJoinRequest(channel_id, chatid)
-        await bot.telegram.sendMessage(chatid, `Congratulations! 🎉 Your request to join <b>${cha_title}</b> is approved.`)
+
     } catch (err) {
         errMessage(err, chatid)
     }
