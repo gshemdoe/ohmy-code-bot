@@ -38,7 +38,8 @@ const imp = {
     xzone: -1001740624527,
     ohmyDB: -1001586042518,
     xbongo: -1001263624837,
-    rtgrp: -1001899312985
+    rtgrp: -1001899312985,
+    rtprem: -1001946174983
 }
 
 //delaying
@@ -261,10 +262,9 @@ bot.on('channel_post', async ctx => {
 
                 //post to xzone
                 await bot.telegram.copyMessage(imp.xzone, imp.replyDb, rpId, {
-                    disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: '⬇ DOWNLOAD VIDEO NZIMA', url: botlink }],
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
                             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
                         ]
                     }
@@ -272,7 +272,7 @@ bot.on('channel_post', async ctx => {
 
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
-                await bot.telegram.copyMessage(imp.xbongo, imp.replyDb, rpId, {
+                await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId, {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
