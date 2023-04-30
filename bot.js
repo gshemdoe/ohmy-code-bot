@@ -131,6 +131,26 @@ bot.start(async ctx => {
     }
 })
 
+bot.command('zilete', async ctx=> {
+    try {
+        let gifs = await gifsModel.find()
+        for (let g of gifs) {
+            await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, g.gifId, {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {text: "⬇ DOWNLOAD VIDEO NZIMA", url: `https://t.me/rahatupu_tzbot?start=RTBOT-${g.nano}`}
+                        ]
+                    ]
+                }
+            })
+            await delay(3500)
+        }
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
 bot.command('p', async ctx => {
     try {
         let com = ctx.message.text
@@ -374,9 +394,11 @@ bot.on('chat_join_request', async ctx => {
     let cha_title = ctx.chatJoinRequest.chat.title
     let name = ctx.chatJoinRequest.from.first_name
 
+    const notOperate = [imp.xbongo, imp.rtprem, imp.rtgrp]
+
     try {
         //dont process rahatupu
-        if (channel_id != imp.xbongo) {
+        if (notOperate.includes(channel_id)) {
             let user = await users.findOne({ chatid })
             if (!user) {
                 await users.create({ points: 3, name, chatid, unano: `user${chatid}` })
