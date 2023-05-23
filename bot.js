@@ -10,6 +10,7 @@ const reqModel = require('./database/requestersDb')
 const xbongoDB = require('./database/xbongoReq')
 const oh_counts = require('./database/redirects-counter')
 const oh_channels = require('./database/oh-channels')
+const rtbotusers = require('./database/rtbot-users')
 
 //fns
 const call_reactions_function = require('./functions/reactions')
@@ -113,6 +114,12 @@ bot.start(async ctx => {
                 } else {
                     let our_vid = await db.findOne({ nano })
                     let url = `http://get-ohmy-full-video.font5.net/ohmy/${id}/${nano}`
+                    let fromRt = await rtbotusers.findOne({chatid: id})
+                    //angalia kama ni mswahili
+                    if(fromRt) {
+                        url = `https://t.me/rahatupu_tzbot?start=RTBOT-${nano}`
+                    }
+                    
                     await ctx.reply(`You're about to download <b>${our_vid.caption}</b>\n\n<i>open the site below for at least 5 seconds to get this video</i>`, {
                         parse_mode: 'HTML',
                         reply_markup: {
@@ -276,7 +283,7 @@ bot.on('channel_post', async ctx => {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: '⬇ DOWNLOAD VIDEO NZIMA', url: rtbot }]
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]
                         ]
                     }
                 })
