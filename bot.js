@@ -132,6 +132,8 @@ bot.start(async ctx => {
                     })
                 }
             }
+        } else {
+            await ctx.reply('Hello, Return/Enter to our channel for full videos')
         }
     } catch (err) {
         errMessage(err, id)
