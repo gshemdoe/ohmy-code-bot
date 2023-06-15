@@ -18,12 +18,13 @@ const call_reactions_function = require('./functions/reactions')
 const bot = new Telegraf(process.env.BOT_TOKEN)
     .catch((err) => console.log(err.message))
 
-mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASS}@nodetuts.ngo9k.mongodb.net/ohmyNew?retryWrites=true&w=majority`)
+mongoose.set('strictQuery', false)
+mongoose.connect(`mongodb://${process.env.USER}:${process.env.PASS}@nodetuts-shard-00-00.ngo9k.mongodb.net:27017,nodetuts-shard-00-01.ngo9k.mongodb.net:27017,nodetuts-shard-00-02.ngo9k.mongodb.net:27017/ohmyNew?ssl=true&replicaSet=atlas-pyxyme-shard-0&authSource=admin&retryWrites=true&w=majority`)
     .then(() => {
-        console.log('Connected to the database')
+        console.log('Bot connected to the database')
     }).catch((err) => {
         console.log(err)
-        bot.telegram.sendMessage(741815228, err.message)
+        bot.telegram.sendMessage(741815228, 'mongoose from bot '+err.message)
     })
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -114,12 +115,12 @@ bot.start(async ctx => {
                 } else {
                     let our_vid = await db.findOne({ nano })
                     let url = `http://get-ohmy-full-video.font5.net/ohmy/${id}/${nano}`
-                    let fromRt = await rtbotusers.findOne({chatid: id})
+                    let fromRt = await rtbotusers.findOne({ chatid: id })
                     //angalia kama ni mswahili
-                    if(fromRt) {
+                    if (fromRt) {
                         url = `https://t.me/rahatupu_tzbot?start=RTBOT-${nano}`
                     }
-                    
+
                     await ctx.reply(`You're about to download <b>${our_vid.caption}</b>\n\n<i>open the site below for at least 5 seconds to get this video</i>`, {
                         parse_mode: 'HTML',
                         reply_markup: {
