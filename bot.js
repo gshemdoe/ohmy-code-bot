@@ -259,26 +259,26 @@ bot.on('channel_post', async ctx => {
                 })
 
                 //post to premium channel
-                await bot.telegram.copyMessage(imp.prem_channel, imp.replyDb, rpId, {
-                    disable_notification: true,
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                        ]
-                    }
-                }).catch(err => errMessage(err, ctx.chat.id))
+                // await bot.telegram.copyMessage(imp.prem_channel, imp.replyDb, rpId, {
+                //     disable_notification: true,
+                //     reply_markup: {
+                //         inline_keyboard: [
+                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
+                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
+                //         ]
+                //     }
+                // }).catch(err => errMessage(err, ctx.chat.id))
 
 
                 //post to xzone
-                await bot.telegram.copyMessage(imp.xzone, imp.replyDb, rpId, {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                            [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                        ]
-                    }
-                })
+                // await bot.telegram.copyMessage(imp.xzone, imp.replyDb, rpId, {
+                //     reply_markup: {
+                //         inline_keyboard: [
+                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
+                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
+                //         ]
+                //     }
+                // })
 
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
@@ -287,23 +287,6 @@ bot.on('channel_post', async ctx => {
                     reply_markup: {
                         inline_keyboard: [
                             [{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]
-                        ]
-                    }
-                })
-
-                //post to rt - obsolete
-                let rt_gif = await bot.telegram.copyMessage(imp.rtgrp, imp.replyDb, rpId)
-                await bot.telegram.editMessageCaption(imp.rtgrp, rt_gif.message_id, '', '#Trailer \n   Full video 👇👇')
-                let vid = await db.findOne({ nano: cdata })
-                await delay(500)
-                await bot.telegram.copyMessage(imp.rtgrp, imp.ohmyDB, vid.msgId, {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                { text: '🔥+1', callback_data: 'em1' },
-                                { text: '❤+1', callback_data: 'em2' },
-                                { text: '👍+1', callback_data: 'em3' },
-                            ]
                         ]
                     }
                 })
