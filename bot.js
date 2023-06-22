@@ -41,7 +41,9 @@ const imp = {
     ohmyDB: -1001586042518,
     xbongo: -1001263624837,
     rtgrp: -1001899312985,
-    rtprem: -1001946174983
+    rtprem: -1001946174983,
+    rt4i4n: -1001880391908,
+    rtmalipo: 5849160770
 }
 
 //delaying
@@ -149,6 +151,32 @@ bot.command('p', async ctx => {
         await bot.telegram.sendVideo(imp.pzone, url320)
     } catch (err) {
         await ctx.reply(err.message)
+    }
+})
+
+bot.command('iphone', async ctx=> {
+    try {
+        let all = await gifsModel.find()
+
+        let url = `https://t.me/rahatupu_tzbot?start=RTBOT-`
+        let rpm = {
+            inline_keyboard: [
+                [
+                    {text: '⬇ DOWNLOAD FULL VIDEO', url}
+                ]
+            ]
+        }
+
+        for (let v of all) {
+            setTimeout(()=> {
+                url = url + v.nano
+                bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, v.gifId, {
+                    reply_markup: rpm
+                })
+            }, 3.3 * 1000)
+        }
+    } catch (err) {
+        console.log(err.message)
     }
 })
 
@@ -283,6 +311,15 @@ bot.on('channel_post', async ctx => {
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
                 await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId, {
+                    disable_notification: true,
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]
+                        ]
+                    }
+                })
+
+                await bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, rpId, {
                     disable_notification: true,
                     reply_markup: {
                         inline_keyboard: [
