@@ -24,7 +24,7 @@ mongoose.connect(`mongodb://${process.env.USER}:${process.env.PASS}@nodetuts-sha
         console.log('Bot connected to the database')
     }).catch((err) => {
         console.log(err)
-        bot.telegram.sendMessage(741815228, 'mongoose from bot '+err.message)
+        bot.telegram.sendMessage(741815228, 'mongoose from bot ' + err.message)
     })
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -154,29 +154,31 @@ bot.command('p', async ctx => {
     }
 })
 
-bot.command('iphone', async ctx=> {
-    try {
-        let all = await gifsModel.find()
+bot.command('iphone', async ctx => {
+    if (ctx.chat.id == imp.rtmalipo) {
+        try {
+            let all = await gifsModel.find()
 
-        let url = `https://t.me/rahatupu_tzbot?start=RTBOT-`
-        let rpm = {
-            inline_keyboard: [
-                [
-                    {text: '⬇ DOWNLOAD FULL VIDEO', url}
+            let url = `https://t.me/rahatupu_tzbot?start=RTBOT-`
+            let rpm = {
+                inline_keyboard: [
+                    [
+                        { text: '⬇ DOWNLOAD FULL VIDEO', url }
+                    ]
                 ]
-            ]
-        }
+            }
 
-        for (let v of all) {
-            setTimeout(()=> {
-                url = url + v.nano
-                bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, v.gifId, {
-                    reply_markup: rpm
-                })
-            }, 3.3 * 1000)
+            for (let v of all) {
+                setTimeout(() => {
+                    url = url + v.nano
+                    bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, v.gifId, {
+                        reply_markup: rpm
+                    })
+                }, 3.3 * 1000)
+            }
+        } catch (err) {
+            console.log(err.message)
         }
-    } catch (err) {
-        console.log(err.message)
     }
 })
 
