@@ -159,22 +159,20 @@ bot.command('iphone', async ctx => {
         try {
             let all = await gifsModel.find()
 
-            let url = `https://t.me/rahatupu_tzbot?start=RTBOT-`
-            let rpm = {
-                inline_keyboard: [
-                    [
-                        { text: '⬇ DOWNLOAD FULL VIDEO', url }
-                    ]
-                ]
-            }
-
-            for (let v of all) {
+            for (let [index, v] of all.entries()) {
                 setTimeout(() => {
-                    url = url + v.nano
+                    let url = `https://t.me/rahatupu_tzbot?start=RTBOT-${v.nano}`
                     bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, v.gifId, {
-                        reply_markup: rpm
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: '⬇ DOWNLOAD FULL VIDEO', url }
+                                ]
+                            ]
+                        }
                     })
-                }, 3.3 * 1000)
+                        .catch(e => console.log(e.message))
+                }, index * 3.5 * 1000)
             }
         } catch (err) {
             console.log(err.message)
@@ -288,28 +286,6 @@ bot.on('channel_post', async ctx => {
                     gifId: rpId
                 })
 
-                //post to premium channel
-                // await bot.telegram.copyMessage(imp.prem_channel, imp.replyDb, rpId, {
-                //     disable_notification: true,
-                //     reply_markup: {
-                //         inline_keyboard: [
-                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                //         ]
-                //     }
-                // }).catch(err => errMessage(err, ctx.chat.id))
-
-
-                //post to xzone
-                // await bot.telegram.copyMessage(imp.xzone, imp.replyDb, rpId, {
-                //     reply_markup: {
-                //         inline_keyboard: [
-                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L1', url: botlink }],
-                //             [{ text: '⬇ DOWNLOAD FULL VIDEO #L2', url: op2link }],
-                //         ]
-                //     }
-                // })
-
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
                 await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId, {
@@ -396,6 +372,7 @@ bot.on('channel_post', async ctx => {
             } else { await ctx.reply('Channel already added') }
         }
     } catch (err) {
+        await ctx.reply(err.message)
         console.log(err.message)
     }
 })
@@ -449,3 +426,11 @@ process.on('uncaughtException', (err) => {
     bot.telegram.sendMessage(741815228, err.message + ' - It is an uncaught exception.')
         .catch((err) => console.log(err.message))
 })
+
+const http = require('http')
+const server = http.createServer((req, res)=> {
+    res.writeHead(200, {"Content-Type": "text/plain"})
+    res.end('Karibu, Dramastorebot')
+})
+
+server.listen(process.env.PORT || 3000, ()=> console.log('Listen to port 3000'))
