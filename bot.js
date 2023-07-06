@@ -351,7 +351,7 @@ bot.on('channel_post', async ctx => {
             ]
         }
 
-        if (txt.toLowerCase() == 'add me' && !impChannels.includes(chan_id)) {
+        if (!impChannels.includes(chan_id) && txt.toLowerCase() == 'add me') {
             let chat = await ctx.getChatAdministrators()
             for (let c of chat) {
                 if (c.status == 'creator') {
