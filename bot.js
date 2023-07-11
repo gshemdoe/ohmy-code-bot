@@ -266,6 +266,7 @@ bot.on('channel_post', async ctx => {
             if (ctx.channelPost.reply_to_message) {
                 let rpId = ctx.channelPost.reply_to_message.message_id
                 let cdata = ctx.channelPost.text
+                let orgCap = ctx.channelPost.reply_to_message.caption
 
                 let posts = [
                     '62c84d54da06342665e31fb7',
@@ -288,8 +289,7 @@ bot.on('channel_post', async ctx => {
 
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
-                await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId, {
-                    disable_notification: true,
+                let _post = await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId, {
                     reply_markup: {
                         inline_keyboard: [
                             [{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]
@@ -297,14 +297,17 @@ bot.on('channel_post', async ctx => {
                     }
                 })
 
-                await bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, rpId, {
-                    disable_notification: true,
+                await bot.telegram.editMessageCaption(imp.rtprem, _post.message_id, '', `<b>${orgCap}\n\n📁 Full Video 👇\n<a href="${rtbot}">https://t.me/full-video-yenye-sauti/${cdata}</a></b>`, {parse_mode: 'HTML'})
+
+                let _post2 = await bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, rpId, {
                     reply_markup: {
                         inline_keyboard: [
                             [{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]
                         ]
                     }
                 })
+
+                await bot.telegram.editMessageCaption(imp.rt4i4n, _post2.message_id, '', `${orgCap}\n\n📁 Full Video 👇\n<a href="${rtbot}">https://t.me/download-full-video-yenye-sauti/${cdata}</a></b>`, {parse_mode: 'HTML'})
             }
         }
         if (ctx.channelPost.chat.id == imp.ohmyDB && ctx.channelPost.video) {
