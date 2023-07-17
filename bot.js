@@ -183,12 +183,13 @@ bot.command('iphone', async ctx => {
 //reactions buttons
 call_reactions_function(bot, imp)
 
-bot.command('/broadcast', async ctx => {
+bot.command('broadcast', async ctx => {
     let url = 'https://redirecting5.eu/p/tveg/GFOt/46RX'
+    let bdsmGame = `https://t.aagm.link/153258/7592/0?bo=3511,3512,3521,3522`
     let rp_mkup = {
         inline_keyboard: [
-            [{ text: "♦ PLAY NOW", url }],
-            [{ text: "🔞 More 18+ Games", url }]
+            [{ text: "♦ PLAY NOW", bdsmGame }],
+            [{ text: "🔞 More 18+ Games", bdsmGame }]
         ]
     }
     let myId = ctx.chat.id
@@ -205,8 +206,7 @@ bot.command('/broadcast', async ctx => {
                     }
                     bot.telegram.copyMessage(u.chatid, imp.replyDb, msg_id, {
                         reply_markup: rp_mkup
-                    })
-                        .then(() => console.log('Offer sent to ' + u.chatid))
+                    }).then(() => console.log('Offer sent to ' + u.chatid))
                         .catch((err) => {
                             if (err.message.includes('blocked')) {
                                 users.findOneAndDelete({ chatid: u.chatid })
@@ -289,15 +289,16 @@ bot.on('channel_post', async ctx => {
 
                 //post to XBONGO
                 let rtbot = `https://t.me/rahatupu_tzbot?start=RTBOT-${cdata}`
-                let rpm = {inline_keyboard: [[{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]]}
+                let rpm = { inline_keyboard: [[{ text: '⬇ DOWNLOAD FULL VIDEO', url: rtbot }]] }
 
                 let _post = await bot.telegram.copyMessage(imp.rtprem, imp.replyDb, rpId)
                 let _post2 = await bot.telegram.copyMessage(imp.rt4i4n, imp.replyDb, rpId)
 
-                await bot.telegram.editMessageCaption(imp.rtprem, _post.message_id, '', `<b>${orgCap}\n\n📁 Full Video 👇\n<a href="${rtbot}">https://t.me/full-video-yenye-sauti/${cdata}</a></b>`, {parse_mode: 'HTML', reply_markup: rpm})
+                await bot.telegram.editMessageCaption(imp.rtprem, _post.message_id, '', `<b>${orgCap}\n\n📁 Full Video 👇\n<a href="${rtbot}">https://t.me/full-video-yenye-sauti/${cdata}</a></b>`, { parse_mode: 'HTML', reply_markup: rpm })
 
                 await bot.telegram.editMessageCaption(imp.rt4i4n, _post2.message_id, '', `<b>${orgCap}\n\n📁 Full Video 👇\n<a href="${rtbot}">https://t.me/download-full-video-yenye-sauti/${cdata}</a></b>`, {
-                    parse_mode: 'HTML', reply_markup: rpm})
+                    parse_mode: 'HTML', reply_markup: rpm
+                })
             }
         }
         if (ctx.channelPost.chat.id == imp.ohmyDB && ctx.channelPost.video) {
@@ -421,9 +422,9 @@ process.on('uncaughtException', (err) => {
 })
 
 const http = require('http')
-const server = http.createServer((req, res)=> {
-    res.writeHead(200, {"Content-Type": "text/plain"})
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" })
     res.end('Karibu, Dramastorebot')
 })
 
-server.listen(process.env.PORT || 3000, ()=> console.log('Listen to port 3000'))
+server.listen(process.env.PORT || 3000, () => console.log('Listen to port 3000'))
